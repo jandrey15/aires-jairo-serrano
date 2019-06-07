@@ -16,7 +16,8 @@ const Layout = ({ children, title }) => {
 
       {children}
 
-      <style jsx>{`
+      <style global jsx>{`
+        @import url('https://fonts.googleapis.com/css?family=Nunito:400,700&display=swap');
 
         html {
           line-height: 1.15; /* 1 */
@@ -25,6 +26,8 @@ const Layout = ({ children, title }) => {
 
         body {
           margin: 0;
+          font-family: 'Nunito', sans-serif;
+          font-size: 16px;
         }
 
         main {

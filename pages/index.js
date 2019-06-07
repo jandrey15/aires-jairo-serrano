@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Router from 'next/router'
 import Layout from '../components/Layout'
 import Firebase from '../firebase'
 
@@ -9,24 +10,41 @@ class Home extends Component {
     this.state = {
       email: '',
       password: '',
-      error: null
+      error: null,
+      loading: true
     }
     this.firebase = new Firebase()
   }
 
+  static async getInitialProps ({ pathname }) {
+    console.log('PATHNAME', pathname)
+    return { pathname }
+  }
+
   componentDidMount () {
-    this.firebase.auth.onAuthStateChanged(user => {
+    this.fireBaseListener = this.firebase.auth.onAuthStateChanged(user => {
       if (user) {
-        // $('#btnInicioSesion').text('Salir')
-        if (user.photoURL) {
-          console.log(user.photoURL)
-        } else {
-          console.log('user sin photo')
-        }
+        // user está logueado.
+        this.setState({
+          loading: false
+        })
+        Router.push('/admin')
+        // if (user.photoURL) {
+        //   console.log(user.photoURL)
+        // } else {
+        //   console.log('user sin photo')
+        // }
       } else {
         console.info('Iniciar sesión')
+        this.setState({
+          loading: false
+        })
       }
     })
+  }
+
+  componentWillUnmount () {
+    this.fireBaseListener && this.fireBaseListener()
   }
 
   onSubmit = event => {
@@ -55,10 +73,13 @@ class Home extends Component {
   }
 
   render () {
-    const { email, password, error } = this.state
+    const { email, password, error, loading } = this.state
 
     const isInvalid = password === '' || email === ''
     // console.log(isInvalid)
+    if (loading) {
+      return <span>Loading...</span>
+    }
 
     return (
       <Layout title='Login'>
