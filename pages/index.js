@@ -1,34 +1,47 @@
 import React, { Component } from 'react'
-import Firebase from '../components/Firabase/firebase'
-import Link from 'next/link'
+import Layout from '../components/Layout'
+import Firebase from '../firebase'
 
-const SignUpPage = () => (
-  <div>
-    <h1>SignUp</h1>
-    <SignUpForm />
-  </div>
-)
-
-class SignUpForm extends Component {
+class Home extends Component {
   constructor (props) {
     super(props)
+
     this.state = {
-      username: '',
       email: '',
-      passwordOne: '',
-      passwordTwo: '',
+      password: '',
       error: null
     }
     this.firebase = new Firebase()
   }
 
+  componentDidMount () {
+    this.firebase.auth.onAuthStateChanged(user => {
+      if (user) {
+        // $('#btnInicioSesion').text('Salir')
+        if (user.photoURL) {
+          console.log(user.photoURL)
+        } else {
+          console.log('user sin photo')
+        }
+      } else {
+        console.info('Iniciar sesión')
+      }
+    })
+  }
+
   onSubmit = event => {
-    const { username, email, passwordOne } = this.state
+    const { email, password } = this.state
 
     this.firebase
-      .doCreateUserWithEmailAndPassword(email, passwordOne)
-      .then(authUser => {
+      .doAutEmailPass(email, password)
+      .then((result) => {
         this.setState({ ...this.state })
+        if (result.user.emailVerified) {
+          console.info(`Bienvenido ${result.user.displayName}`)
+        } else {
+          this.firebase.doSignOut()
+          console.warn('Por favor realiza la verificación de la cuenta')
+        }
       })
       .catch(error => {
         this.setState({ error })
@@ -39,63 +52,40 @@ class SignUpForm extends Component {
 
   onChange = event => {
     this.setState({ [event.target.name]: event.target.value })
-  };
+  }
 
   render () {
-    const {
-      username,
-      email,
-      passwordOne,
-      passwordTwo,
-      error
-    } = this.state
+    const { email, password, error } = this.state
 
-    const isInvalid =
-      passwordOne !== passwordTwo ||
-      passwordOne === '' ||
-      email === '' ||
-      username === ''
+    const isInvalid = password === '' || email === ''
+    // console.log(isInvalid)
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name='username'
-          value={username}
-          onChange={this.onChange}
-          type='text'
-          placeholder='Full Name'
-        />
-        <input
-          name='email'
-          value={email}
-          onChange={this.onChange}
-          type='text'
-          placeholder='Email Address'
-        />
-        <input
-          name='passwordOne'
-          value={passwordOne}
-          onChange={this.onChange}
-          type='password'
-          placeholder='Password'
-        />
-        <input
-          name='passwordTwo'
-          value={passwordTwo}
-          onChange={this.onChange}
-          type='password'
-          placeholder='Confirm Password'
-        />
-        <button disabled={isInvalid} type='submit'>Sign Up</button>
+      <Layout title='Login'>
+        <form onSubmit={this.onSubmit}>
+          <input
+            name='email'
+            value={email}
+            onChange={this.onChange}
+            type='text'
+            placeholder='Email Address'
+          />
+          <input
+            name='password'
+            value={password}
+            onChange={this.onChange}
+            type='password'
+            placeholder='Password'
+          />
+          <button disabled={isInvalid} type='submit'>
+          Sign In
+          </button>
 
-        <Link href='/post?slug=something' as='/post/something'>
-          <a>Post</a>
-        </Link>
-
-        {error && <p>{error.message}</p>}
-      </form>
+          {error && <p>{error.message}</p>}
+        </form>
+      </Layout>
     )
   }
 }
 
-export default SignUpPage
+export default Home
