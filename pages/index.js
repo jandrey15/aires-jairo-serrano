@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { withFirebase } from '../components/Firabase'
+import Firebase from '../components/Firabase/firebase'
+import Link from 'next/link'
 
 const SignUpPage = () => (
   <div>
@@ -8,7 +9,7 @@ const SignUpPage = () => (
   </div>
 )
 
-class SignUpFormBase extends Component {
+class SignUpForm extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -18,12 +19,13 @@ class SignUpFormBase extends Component {
       passwordTwo: '',
       error: null
     }
+    this.firebase = new Firebase()
   }
 
   onSubmit = event => {
     const { username, email, passwordOne } = this.state
 
-    this.props.firebase
+    this.firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
         this.setState({ ...this.state })
@@ -86,12 +88,14 @@ class SignUpFormBase extends Component {
         />
         <button disabled={isInvalid} type='submit'>Sign Up</button>
 
+        <Link href='/post?slug=something' as='/post/something'>
+          <a>Post</a>
+        </Link>
+
         {error && <p>{error.message}</p>}
       </form>
     )
   }
 }
-
-const SignUpForm = withFirebase(SignUpFormBase)
 
 export default SignUpPage
