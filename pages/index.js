@@ -17,7 +17,7 @@ class Home extends Component {
   }
 
   static async getInitialProps ({ pathname }) {
-    console.log('PATHNAME', pathname)
+    // console.log('PATHNAME', pathname)
     return { pathname }
   }
 
@@ -62,6 +62,7 @@ class Home extends Component {
         }
       })
       .catch(error => {
+        // Si pasa algo o esta mal el pass.
         this.setState({ error })
       })
 
@@ -83,27 +84,40 @@ class Home extends Component {
 
     return (
       <Layout title='Login'>
-        <form onSubmit={this.onSubmit}>
-          <input
-            name='email'
-            value={email}
-            onChange={this.onChange}
-            type='text'
-            placeholder='Email Address'
-          />
-          <input
-            name='password'
-            value={password}
-            onChange={this.onChange}
-            type='password'
-            placeholder='Password'
-          />
-          <button disabled={isInvalid} type='submit'>
-          Sign In
-          </button>
+        <div className='form'>
+          <form onSubmit={this.onSubmit}>
+            <input
+              name='email'
+              value={email}
+              onChange={this.onChange}
+              type='text'
+              placeholder='Email Address'
+            />
+            <input
+              name='password'
+              value={password}
+              onChange={this.onChange}
+              type='password'
+              placeholder='Password'
+            />
+            <button disabled={isInvalid} type='submit'>
+            Sign In
+            </button>
 
-          {error && <p>{error.message}</p>}
-        </form>
+            {error && <p>{error.message}</p>}
+          </form>
+        </div>
+        <style jsx>{`
+          .form {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+          }
+        `}</style>
       </Layout>
     )
   }

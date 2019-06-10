@@ -18,9 +18,12 @@ class SignUpForm extends Component {
   onSubmit = event => {
     const { username, email, passwordOne } = this.state
 
+    event.preventDefault()
+
     this.firebase
       .doCreateUserEmailPass(email, passwordOne)
       .then(result => {
+        // console.log('data', result.user)
         this.setState({ ...this.state })
         result.user.updateProfile({
           displayName: username
@@ -34,15 +37,22 @@ class SignUpForm extends Component {
           console.error(error.message)
         })
 
-        this.firebase.doSignOut()
-
         console.info(`Bienvenido ${username}, debes realizar el proceso de verificación`)
+
+        return this.firebase
+          .doCreateUserDb(result.user.uid, username, email, 'https://images.jpg')
       })
       .catch(error => {
+        console.error(`Error creando el user => ${error}`)
         this.setState({ error })
       })
-
-    event.preventDefault()
+      .then(refDoc => {
+        console.log(`Id del user is => ${refDoc.id}`)
+        this.firebase.doSignOut() // Cierra la sesión.
+      })
+      .catch(error => {
+        console.error(`Error creando el user en db => ${error}`)
+      })
   }
 
   onChange = event => {

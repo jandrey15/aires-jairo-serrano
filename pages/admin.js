@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Router from 'next/router'
 import Layout from '../components/Layout'
 import Firebase from '../firebase'
+import Util from '../helpers/util'
 
 class Admin extends Component {
   constructor (props) {
@@ -9,13 +10,15 @@ class Admin extends Component {
 
     this.state = {
       loading: true,
-      name: null
+      name: null,
+      dataCocinas: []
     }
     this.firebase = new Firebase()
+    // this.util = new Utilidad()
   }
 
   static async getInitialProps ({ pathname }) {
-    console.log('PATHNAME', pathname)
+    // console.log('PATHNAME', pathname)
     return { pathname }
   }
 
@@ -39,6 +42,19 @@ class Admin extends Component {
         Router.push('/')
       }
     })
+
+    this.firebase
+      .doGetAllCocina()
+      .then((querySnapshot) => {
+        const data = querySnapshot.docs.map(doc => doc.data())
+        console.log(data)
+        this.setState({
+          dataCocinas: data
+        })
+      })
+      .catch(error => {
+        console.error('Error getting document:', error)
+      })
   }
 
   componentWillUnmount () {
@@ -51,7 +67,7 @@ class Admin extends Component {
   }
 
   render () {
-    const { loading, name } = this.state
+    const { loading, name, dataCocinas } = this.state
 
     if (loading) {
       return <span>Loading...</span>
@@ -59,10 +75,38 @@ class Admin extends Component {
 
     return (
       <Layout title='Admin'>
-        <h3>Hello admin - {name}</h3>
-        <button type='button' onClick={this.handleSignOut}>
-          Sign Out
-        </button>
+        <div className='container'>
+          <h3>Hello admin - {name}</h3>
+          <button type='button' onClick={this.handleSignOut}>
+            Sign Out
+          </button>
+        </div>
+
+        <section className='data__cocinas container'>
+          {
+            dataCocinas.map(data => {
+              return (
+                <div className='mantenimiento' key={data.uid}>
+                  <h1>{data.actividades}</h1>
+                  <p>{data.equipo}</p>
+                  {Util.obtenerFecha(data.fecha.toDate())}
+                  <p>{data.observaciones}</p>
+                </div>
+              )
+            })
+          }
+        </section>
+        <style jsx>{`
+          .container {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            height: 20vh;
+            align-items: center;
+            justify-content: center;
+          }
+        `}</style>
       </Layout>
     )
   }
