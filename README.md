@@ -9,7 +9,7 @@ Require Node.js 8.x
 * `yarn install` to install the dependencies
 * `yarn run dev` to build development environment
 * `yarn run build `to build production environment
-* `yarn start` to run development mode app
+* `yarn start` to run production mode app
 
 ## Tools
 
