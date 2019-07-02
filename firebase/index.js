@@ -43,21 +43,35 @@ class Firebase {
           subcriber: true
         }
       })
+  }
 
-    // https://firebase.google.com/docs/firestore/manage-data/add-data?authuser=0
+  // https://firebase.google.com/docs/firestore/manage-data/add-data?authuser=0
 
-    // Add a new document in collection "cities"
-    // db.collection("cities").doc("LA").set({
-    //   name: "Los Angeles",
-    //   state: "CA",
-    //   country: "USA"
-    // })
-    // .then(function() {
-    //   console.log("Document successfully written!");
-    // })
-    // .catch(function(error) {
-    //   console.error("Error writing document: ", error);
-    // });
+  doCreateDocumentDb = (uid, equipo, fecha, actividades, cantidad, tipo, observaciones, realizado, recibido) => {
+    let pr = false
+    let cr = false
+
+    if (tipo === 'pr') {
+      pr = true
+    } else if (tipo === 'cr') {
+      cr = true
+    }
+    return this.db
+      .collection('cocina')
+      .add({
+        uid: uid,
+        equipo: equipo,
+        fecha: fecha,
+        actividades: actividades,
+        cantidad: cantidad,
+        tipo: {
+          pr: pr,
+          cr: cr
+        },
+        observaciones: observaciones,
+        realizado: realizado,
+        recibido: recibido
+      })
   }
 
   doGetAllCocina = () => this.db.collection('cocina').get()
