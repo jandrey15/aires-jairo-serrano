@@ -29,9 +29,11 @@ class Firebase {
     // https://firebase.google.com/docs/firestore/manage-data/add-data
     const dateNow = new Date()
     // console.log(dateNow)
+    // db.collection("cities").doc("new-city-id").set(data);
     return this.db
       .collection('users')
-      .add({
+      .doc(uid)
+      .set({
         uid: uid,
         displayName: displayName,
         email: email,
@@ -40,7 +42,7 @@ class Firebase {
         roles: {
           admin: false,
           editor: false,
-          subcriber: true
+          subscriber: true
         }
       })
   }
@@ -56,12 +58,19 @@ class Firebase {
     } else if (tipo === 'cr') {
       cr = true
     }
+    console.log(fecha)
+    let newDate = new Date(fecha)
+    const dias = 1
+    newDate.setDate(newDate.getDate() + dias)
+
+    console.log(new Date(fecha))
+    console.log(newDate)
     return this.db
       .collection('cocina')
       .add({
         uid: uid,
         equipo: equipo,
-        fecha: fecha,
+        fecha: newDate,
         actividades: actividades,
         cantidad: cantidad,
         tipo: {
