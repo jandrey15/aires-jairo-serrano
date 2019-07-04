@@ -58,13 +58,13 @@ class Firebase {
     } else if (tipo === 'cr') {
       cr = true
     }
-    console.log(fecha)
+    // console.log(fecha)
     let newDate = new Date(fecha)
     const dias = 1
     newDate.setDate(newDate.getDate() + dias)
 
-    console.log(new Date(fecha))
-    console.log(newDate)
+    // console.log(new Date(fecha))
+    // console.log(newDate)
     return this.db
       .collection('cocina')
       .add({
@@ -83,7 +83,42 @@ class Firebase {
       })
   }
 
-  doGetAllCocina = () => this.db.collection('cocina').get()
+  doUpdateDocumentDb = (id, uid, equipo, fecha, actividades, cantidad, tipo, observaciones, realizado, recibido) => {
+    let pr = false
+    let cr = false
+
+    if (tipo === 'pr') {
+      pr = true
+    } else if (tipo === 'cr') {
+      cr = true
+    }
+    // console.log(fecha)
+    let newDate = new Date(fecha)
+    const dias = 1
+    newDate.setDate(newDate.getDate() + dias)
+
+    // console.log(new Date(fecha))
+    // console.log(newDate)
+    return this.db
+      .collection('cocina')
+      .doc(id)
+      .set({
+        uid: uid,
+        equipo: equipo,
+        fecha: newDate,
+        actividades: actividades,
+        cantidad: cantidad,
+        tipo: {
+          pr: pr,
+          cr: cr
+        },
+        observaciones: observaciones,
+        realizado: realizado,
+        recibido: recibido
+      })
+  }
+
+  doGetAllCocina = () => this.db.collection('cocina').orderBy('fecha', 'desc').limit(15).get()
 }
 
 export default Firebase

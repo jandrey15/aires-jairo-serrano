@@ -3,7 +3,6 @@ import Router from 'next/router'
 import Layout from '../components/Layout'
 import Firebase from '../firebase'
 import Util from '../helpers/util'
-import { isValid } from 'ipaddr.js'
 
 class Admin extends Component {
   constructor (props) {
@@ -55,7 +54,10 @@ class Admin extends Component {
     this.firebase
       .doGetAllCocina()
       .then((querySnapshot) => {
-        const data = querySnapshot.docs.map(doc => doc.data())
+        let data = []
+        querySnapshot.forEach(doc => {
+          data.push({ ...doc.data(), id: doc.id })
+        })
         console.log(data)
         this.setState({
           dataCocinas: data
@@ -85,7 +87,7 @@ class Admin extends Component {
     const user = this.firebase.auth.currentUser
 
     const cantidad = this.cantidadInput.current.value
-    const fecha = this.fechaInput.current.valueAsDate
+    const fecha = this.fechaInput.current.value
     const tipo = this.tipoSelect.current.value
     const observaciones = this.observacionesText.current.value
 
@@ -101,6 +103,11 @@ class Admin extends Component {
           console.error('Error adding document: ', error)
         })
     }
+  }
+
+  handler = (id, event) => {
+    event.preventDefault()
+    console.log(id)
   }
 
   render () {
@@ -156,13 +163,14 @@ class Admin extends Component {
 
         <section className='data__cocinas'>
           {
-            dataCocinas.map((data, index) => {
+            dataCocinas.map((data) => {
               return (
-                <div className='mantenimiento' key={index}>
+                <div className='mantenimiento' key={data.id}>
                   <h1>{data.actividades}</h1>
                   <p>{data.equipo}</p>
                   {Util.obtenerFecha(data.fecha.toDate())}
                   <p>{data.observaciones}</p>
+                  <a href='#' onClick={(e) => this.handler(data.id, e)}>Editar</a>
                 </div>
               )
             })
