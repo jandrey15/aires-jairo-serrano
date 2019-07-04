@@ -3,6 +3,7 @@ import Router from 'next/router'
 import Layout from '../components/Layout'
 import Firebase from '../firebase'
 import Util from '../helpers/util'
+import Edit from '../components/containers/Edit'
 
 class Admin extends Component {
   constructor (props) {
@@ -11,11 +12,13 @@ class Admin extends Component {
     this.state = {
       loading: true,
       name: null,
+      update: false,
       dataCocinas: [],
       equipo: '',
       actividades: '',
       realizado: '',
-      recibido: ''
+      recibido: '',
+      getDocument: {}
     }
     this.firebase = new Firebase()
     // this.util = new Utilidad()
@@ -53,7 +56,7 @@ class Admin extends Component {
 
     this.firebase
       .doGetAllCocina()
-      .then((querySnapshot) => {
+      .onSnapshot((querySnapshot) => {
         let data = []
         querySnapshot.forEach(doc => {
           data.push({ ...doc.data(), id: doc.id })
@@ -63,9 +66,19 @@ class Admin extends Component {
           dataCocinas: data
         })
       })
-      .catch(error => {
-        console.error('Error getting document:', error)
-      })
+      // .then((querySnapshot) => {
+      //   let data = []
+      //   querySnapshot.forEach(doc => {
+      //     data.push({ ...doc.data(), id: doc.id })
+      //   })
+      //   console.log(data)
+      //   this.setState({
+      //     dataCocinas: data
+      //   })
+      // })
+      // .catch(error => {
+      //   console.error('Error getting document:', error)
+      // })
   }
 
   componentWillUnmount () {
@@ -107,7 +120,25 @@ class Admin extends Component {
 
   handler = (id, event) => {
     event.preventDefault()
+
     console.log(id)
+    this.firebase
+      .doGetDocument(id)
+      .then(doc => {
+        if (doc.exists) {
+          this.setState({
+            update: true,
+            getDocument: doc.data()
+          })
+          console.log('Document data:', doc.data())
+        } else {
+          // doc.data() will be undefined in this case
+          console.log('No such document!')
+        }
+      })
+      .catch(error => {
+        console.log('Error getting document:', error)
+      })
   }
 
   render () {
@@ -162,19 +193,45 @@ class Admin extends Component {
         </form>
 
         <section className='data__cocinas'>
+          <table>
+            <thead>
+              <tr>
+                <th>Equipo</th>
+                <th>Fecha</th>
+                <th>Actividades</th>
+                <th>Cantidad</th>
+                <th>Tipo</th>
+                <th>Observaciones</th>
+                <th>Realizado</th>
+                <th>Recibido</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                dataCocinas.map((data) => (
+                  <tr className='mantenimiento' key={data.id}>
+                    <td>{data.equipo}</td>
+                    <td>{Util.obtenerFecha(data.fecha.toDate())}</td>
+                    <td>{data.actividades}</td>
+                    <td>{data.cantidad}</td>
+                    <td>{data.tipo.cr ? 'Correctivo' : data.tipo.pr ? 'Preventivo' : ''}</td>
+                    <td>{data.observaciones}</td>
+                    <td>{data.realizado}</td>
+                    <td>{data.recibido}</td>
+                    <td>
+                      <a href={`/admin/${data.id}`} onClick={(e) => this.handler(data.id, e)}>Editar</a>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
           {
-            dataCocinas.map((data) => {
-              return (
-                <div className='mantenimiento' key={data.id}>
-                  <h1>{data.actividades}</h1>
-                  <p>{data.equipo}</p>
-                  {Util.obtenerFecha(data.fecha.toDate())}
-                  <p>{data.observaciones}</p>
-                  <a href='#' onClick={(e) => this.handler(data.id, e)}>Editar</a>
-                </div>
-              )
-            })
+            this.state.update && (
+              <Edit {...this.state.getDocument} firebase={this.firebase} />
+            )
           }
+
         </section>
         <style jsx>{`
           .container {
@@ -200,6 +257,17 @@ class Admin extends Component {
 
           #form__add .active {
             cursor: pointer;
+          }
+
+          .data__cocinas {
+            max-width: 800px;
+            margin: 0 auto;
+            overflow-x: scroll;
+          }
+
+          .data__cocinas table {
+            border-collapse: separate;
+            border-spacing: 10px 5px;
           }
         `}</style>
       </Layout>

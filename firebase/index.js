@@ -118,7 +118,10 @@ class Firebase {
       })
   }
 
-  doGetAllCocina = () => this.db.collection('cocina').orderBy('fecha', 'desc').limit(15).get()
+  doGetAllCocina = () => this.db.collection('cocina').orderBy('fecha', 'desc').limit(15)
+
+  doGetDocument = (id) => this.db.collection('cocina').doc(id).get()
+  // doGetAllCocina = () => this.db.collection('cocina').orderBy('fecha', 'desc').limit(15).get()
 }
 
 export default Firebase
