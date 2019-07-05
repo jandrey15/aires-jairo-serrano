@@ -15,7 +15,7 @@ class Admin extends Component {
       name: null,
       update: false,
       id: null,
-      dataCocinas: [],
+      data: [],
       equipo: '',
       actividades: '',
       realizado: '',
@@ -29,6 +29,8 @@ class Admin extends Component {
     this.cantidadInput = React.createRef()
     this.tipoSelect = React.createRef()
     this.observacionesText = React.createRef()
+
+    this.tipoSelectFilter = React.createRef()
   }
 
   static async getInitialProps ({ pathname }) {
@@ -58,7 +60,7 @@ class Admin extends Component {
     })
 
     this.unsubscribe = this.firebase
-      .doGetAllCocina()
+      .doGetAllDocuments()
       .onSnapshot((querySnapshot) => {
         let data = []
         querySnapshot.forEach(doc => {
@@ -66,7 +68,7 @@ class Admin extends Component {
         })
         // console.log(data)
         this.setState({
-          dataCocinas: data
+          data: data
         })
       })
 
@@ -77,7 +79,7 @@ class Admin extends Component {
     //   })
     //   console.log(data)
     //   this.setState({
-    //     dataCocinas: data
+    //     data: data
     //   })
     // })
     // .catch(error => {
@@ -160,8 +162,27 @@ class Admin extends Component {
       })
   }
 
+  handleFilter = event => {
+    event.preventDefault()
+    const tipo = this.tipoSelectFilter.current.value
+    // console.log(tipo)
+
+    this.firebase
+      .doFilterType(tipo)
+      .onSnapshot((querySnapshot) => {
+        let data = []
+        querySnapshot.forEach(doc => {
+          data.push({ ...doc.data(), id: doc.id })
+        })
+        // console.log(data)
+        this.setState({
+          data: data
+        })
+      })
+  }
+
   render () {
-    const { loading, id, name, dataCocinas, equipo, actividades, realizado, recibido } = this.state
+    const { loading, id, name, data, equipo, actividades, realizado, recibido } = this.state
 
     const isInvalid = equipo === '' || actividades === '' || realizado === '' || recibido === ''
 
@@ -186,7 +207,7 @@ class Admin extends Component {
           <input type='date' id='fecha' name='fecha' ref={this.fechaInput} />
 
           <label htmlFor='actividades'>Actividades</label>
-          <textarea name='actividades' id='actividades' cols='30' rows='10' onChange={this.onChange} />
+          <textarea name='actividades' id='actividades' cols='30' rows='10' onChange={this.onChange} placeholder='Actividades efectuadas' />
 
           <label htmlFor='cantidad'>Cantidad</label>
           <input type='text' id='cantidad' name='cantidad' placeholder='Cantidad cambio refrigerante' ref={this.cantidadInput} />
@@ -211,44 +232,61 @@ class Admin extends Component {
           </button>
         </form>
 
-        <section className='data__cocinas'>
-          <table>
-            <thead>
-              <tr>
-                <th>Equipo</th>
-                <th>Fecha</th>
-                <th>Actividades</th>
-                <th>Cantidad</th>
-                <th>Tipo</th>
-                <th>Observaciones</th>
-                <th>Realizado</th>
-                <th>Recibido</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                dataCocinas.map((data) => (
-                  <tr className='mantenimiento' key={data.id}>
-                    <td>{data.equipo}</td>
-                    <td>{Util.obtenerFecha(data.fecha.toDate())}</td>
-                    <td>{data.actividades}</td>
-                    <td>{data.cantidad}</td>
-                    <td>{data.tipo.cr ? 'Correctivo' : data.tipo.pr ? 'Preventivo' : ''}</td>
-                    <td>{data.observaciones}</td>
-                    <td>{data.realizado}</td>
-                    <td>{data.recibido}</td>
-                    <td>
-                      <a href={`/editar/${data.id}`} onClick={(e) => this.handleEdit(data.id, e)}>Editar</a>
-                    </td>
-                    <td>
-                      <a href={`/eliminar/${data.id}`} onClick={(e) => this.handleDelete(data.id, e)}>Eliminar</a>
-                    </td>
+        {
+          data.length > 0 ? (
+            <section className='data__cocinas'>
+              <form id='filter'>
+                <label htmlFor='tipo'>Tipo de mantenimiento</label>
+                <select name='tipo' id='tipo' ref={this.tipoSelectFilter}>
+                  <option value='all'>Todos</option>
+                  <option value='pr'>Preventivo</option>
+                  <option value='cr'>Correctivo</option>
+                </select>
+                <button onClick={this.handleFilter}>Filter</button>
+              </form>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Equipo</th>
+                    <th>Fecha</th>
+                    <th>Actividades</th>
+                    <th>Cantidad</th>
+                    <th>Tipo de mantenimiento</th>
+                    <th>Observaciones</th>
+                    <th>Realizado</th>
+                    <th>Recibido</th>
+                    <th />
+                    <th />
                   </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </section>
+                </thead>
+                <tbody>
+                  {
+                    data.map((data) => (
+                      <tr className='mantenimiento' key={data.id}>
+                        <td>{data.equipo}</td>
+                        <td>{Util.obtenerFecha(data.fecha.toDate())}</td>
+                        <td width='250'>{data.actividades}</td>
+                        <td>{data.cantidad}</td>
+                        <td>{data.tipo.cr ? 'Correctivo' : data.tipo.pr ? 'Preventivo' : ''}</td>
+                        <td>{data.observaciones}</td>
+                        <td>{data.realizado}</td>
+                        <td>{data.recibido}</td>
+                        <td>
+                          <a href={`/editar/${data.id}`} onClick={(e) => this.handleEdit(data.id, e)}>Editar</a>
+                        </td>
+                        <td>
+                          <a href={`/eliminar/${data.id}`} onClick={(e) => this.handleDelete(data.id, e)}>Eliminar</a>
+                        </td>
+                      </tr>
+                    ))
+                  }
+                </tbody>
+              </table>
+            </section>
+          ) : (
+            <h2>No hay datos</h2>
+          )
+        }
         <hr />
         {
           this.state.update && (
@@ -294,6 +332,12 @@ class Admin extends Component {
           .data__cocinas table {
             border-collapse: separate;
             border-spacing: 10px 5px;
+            table-layout: fixed;
+            width: 800px;
+          }
+
+          .data__cocinas th, .data__cocinas td {
+              width: 150px;
           }
         `}</style>
       </Layout>

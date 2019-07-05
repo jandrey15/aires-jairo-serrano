@@ -66,7 +66,7 @@ class Firebase {
     // console.log(new Date(fecha))
     // console.log(newDate)
     return this.db
-      .collection('cocina')
+      .collection('mantenimientos')
       .add({
         uid: uid,
         equipo: equipo,
@@ -106,7 +106,7 @@ class Firebase {
     // console.log(new Date(fecha))
     // console.log(newDate)
     return this.db
-      .collection('cocina')
+      .collection('mantenimientos')
       .doc(id)
       .update({
         equipo: equipo,
@@ -121,17 +121,30 @@ class Firebase {
       })
   }
 
-  doGetAllCocina = () => this.db.collection('cocina').orderBy('fecha', 'desc').limit(15)
+  doGetAllDocuments = () => this.db.collection('mantenimientos').orderBy('fecha', 'desc').limit(15)
 
-  doGetDocument = (id) => this.db.collection('cocina').doc(id).get()
+  doGetDocument = (id) => this.db.collection('mantenimientos').doc(id).get()
   // doGetAllCocina = () => this.db.collection('cocina').orderBy('fecha', 'desc').limit(15).get()
+  // https://www.djamware.com/post/5bc50ea680aca7466989441d/reactjs-firebase-tutorial-building-firestore-crud-web-application#ch8
 
   doDeleteDocumentDb = (id) => {
     return this.db
-      .collection('cocina')
+      .collection('mantenimientos')
       .doc(id)
       .delete()
   }
+
+  doFilterType = (type) => {
+    if (type !== 'all') {
+      return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true)
+    }
+
+    return this.db.collection('mantenimientos').orderBy('fecha', 'desc').limit(15)
+  }
+
+  // https://365airsoft.com/es/questions/1617509/firestore-consulta-por-rango-de-fechas?utm_source=programandonet.com&utm_medium=Redirect
+
+  // doFilterTypeCr = () => this.db.collection('mantenimientos').where('tipo.cr', '==', true)
 }
 
 export default Firebase
