@@ -4,6 +4,7 @@ import Layout from '../components/Layout'
 import Firebase from '../firebase'
 import Util from '../helpers/util'
 import Edit from '../components/containers/Edit'
+import Link from 'next/link'
 
 class Admin extends Component {
   constructor (props) {
@@ -13,6 +14,7 @@ class Admin extends Component {
       loading: true,
       name: null,
       update: false,
+      id: null,
       dataCocinas: [],
       equipo: '',
       actividades: '',
@@ -20,6 +22,7 @@ class Admin extends Component {
       recibido: '',
       getDocument: {}
     }
+
     this.firebase = new Firebase()
     // this.util = new Utilidad()
     this.fechaInput = React.createRef()
@@ -54,35 +57,37 @@ class Admin extends Component {
       }
     })
 
-    this.firebase
+    this.unsubscribe = this.firebase
       .doGetAllCocina()
       .onSnapshot((querySnapshot) => {
         let data = []
         querySnapshot.forEach(doc => {
           data.push({ ...doc.data(), id: doc.id })
         })
-        console.log(data)
+        // console.log(data)
         this.setState({
           dataCocinas: data
         })
       })
-      // .then((querySnapshot) => {
-      //   let data = []
-      //   querySnapshot.forEach(doc => {
-      //     data.push({ ...doc.data(), id: doc.id })
-      //   })
-      //   console.log(data)
-      //   this.setState({
-      //     dataCocinas: data
-      //   })
-      // })
-      // .catch(error => {
-      //   console.error('Error getting document:', error)
-      // })
+
+    // .then((querySnapshot) => {
+    //   let data = []
+    //   querySnapshot.forEach(doc => {
+    //     data.push({ ...doc.data(), id: doc.id })
+    //   })
+    //   console.log(data)
+    //   this.setState({
+    //     dataCocinas: data
+    //   })
+    // })
+    // .catch(error => {
+    //   console.error('Error getting document:', error)
+    // })
   }
 
   componentWillUnmount () {
     this.fireBaseListener && this.fireBaseListener()
+    this.unsubscribe && this.unsubscribe()
   }
 
   handleSignOut = event => {
@@ -128,7 +133,8 @@ class Admin extends Component {
         if (doc.exists) {
           this.setState({
             update: true,
-            getDocument: doc.data()
+            getDocument: doc.data(),
+            id
           })
           console.log('Document data:', doc.data())
         } else {
@@ -142,7 +148,7 @@ class Admin extends Component {
   }
 
   render () {
-    const { loading, name, dataCocinas, equipo, actividades, realizado, recibido } = this.state
+    const { loading, id, name, dataCocinas, equipo, actividades, realizado, recibido } = this.state
 
     const isInvalid = equipo === '' || actividades === '' || realizado === '' || recibido === ''
 
@@ -226,13 +232,17 @@ class Admin extends Component {
               }
             </tbody>
           </table>
-          {
-            this.state.update && (
-              <Edit {...this.state.getDocument} firebase={this.firebase} />
-            )
-          }
-
         </section>
+        <hr />
+        {
+          this.state.update && (
+            <Edit {...this.state.getDocument} id={id} />
+          )
+        }
+
+        <Link href='/signup'>
+          <a >signup</a>
+        </Link>
         <style jsx>{`
           .container {
             max-width: 500px;

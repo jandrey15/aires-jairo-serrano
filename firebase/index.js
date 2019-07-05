@@ -83,35 +83,38 @@ class Firebase {
       })
   }
 
-  doUpdateDocumentDb = (id, uid, equipo, fecha, actividades, cantidad, tipo, observaciones, realizado, recibido) => {
+  // https://firebase.google.com/docs/firestore/manage-data/add-data?authuser=0#update-data
+  doUpdateDocumentDb = (id, equipo, fecha, actividades, cantidad, tipo, observaciones, realizado, recibido) => {
     let pr = false
     let cr = false
+    // console.log(tipo)
 
-    if (tipo === 'pr') {
+    if (tipo === 'pr' || tipo.pr) {
       pr = true
-    } else if (tipo === 'cr') {
+    } else if (tipo === 'cr' || tipo.cr) {
       cr = true
     }
     // console.log(fecha)
-    let newDate = new Date(fecha)
-    const dias = 1
-    newDate.setDate(newDate.getDate() + dias)
+    if (typeof fecha === 'string') {
+      let newDate = new Date(fecha)
+      const dias = 1
+      newDate.setDate(newDate.getDate() + dias)
+      fecha = newDate
+    }
+    // console.log(fecha)
 
     // console.log(new Date(fecha))
     // console.log(newDate)
     return this.db
       .collection('cocina')
       .doc(id)
-      .set({
-        uid: uid,
+      .update({
         equipo: equipo,
-        fecha: newDate,
+        fecha: fecha,
         actividades: actividades,
         cantidad: cantidad,
-        tipo: {
-          pr: pr,
-          cr: cr
-        },
+        'tipo.pr': pr,
+        'tipo.cr': cr,
         observaciones: observaciones,
         realizado: realizado,
         recibido: recibido
