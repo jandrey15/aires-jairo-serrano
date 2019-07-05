@@ -125,6 +125,13 @@ class Firebase {
 
   doGetDocument = (id) => this.db.collection('cocina').doc(id).get()
   // doGetAllCocina = () => this.db.collection('cocina').orderBy('fecha', 'desc').limit(15).get()
+
+  doDeleteDocumentDb = (id) => {
+    return this.db
+      .collection('cocina')
+      .doc(id)
+      .delete()
+  }
 }
 
 export default Firebase

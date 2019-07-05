@@ -123,10 +123,10 @@ class Admin extends Component {
     }
   }
 
-  handler = (id, event) => {
+  handleEdit = (id, event) => {
     event.preventDefault()
 
-    console.log(id)
+    // console.log(id)
     this.firebase
       .doGetDocument(id)
       .then(doc => {
@@ -144,6 +144,19 @@ class Admin extends Component {
       })
       .catch(error => {
         console.log('Error getting document:', error)
+      })
+  }
+
+  handleDelete = (id, event) => {
+    event.preventDefault()
+
+    // console.log(id)
+    this.firebase
+      .doDeleteDocumentDb(id)
+      .then(() => {
+        console.log('Document successfully deleted!')
+      }).catch(error => {
+        console.error('Error removing document: ', error)
       })
   }
 
@@ -225,7 +238,10 @@ class Admin extends Component {
                     <td>{data.realizado}</td>
                     <td>{data.recibido}</td>
                     <td>
-                      <a href={`/admin/${data.id}`} onClick={(e) => this.handler(data.id, e)}>Editar</a>
+                      <a href={`/editar/${data.id}`} onClick={(e) => this.handleEdit(data.id, e)}>Editar</a>
+                    </td>
+                    <td>
+                      <a href={`/eliminar/${data.id}`} onClick={(e) => this.handleDelete(data.id, e)}>Eliminar</a>
                     </td>
                   </tr>
                 ))
