@@ -134,11 +134,75 @@ class Firebase {
       .delete()
   }
 
-  doFilterType = (type) => {
+  doFilterType = (type, dateStart, dateEnd) => {
     if (type !== 'all') {
-      return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true)
+      // Filter solo por type
+      if (dateStart === '' && dateEnd === '') {
+        // console.log('ok paso here.')
+        return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true).orderBy('fecha', 'desc').limit(15)
+      } else if (dateStart !== '' && dateEnd !== '') {
+        // Filter por type and fecha inicio and final
+        let start = new Date(dateStart)
+        let end = new Date(dateEnd)
+
+        const dias = 1
+        start.setDate(start.getDate() + dias)
+        end.setDate(end.getDate() + dias)
+        return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true).where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(15)
+      } else if (dateStart === '' && dateEnd !== '') {
+        // Filter por type and fecha final
+        // console.log('Dates here')
+        let start = new Date('2000-01-01')
+        let end = new Date(dateEnd)
+
+        const dias = 1
+        start.setDate(start.getDate() + dias)
+        end.setDate(end.getDate() + dias)
+        return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true).where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(15)
+      } else if (dateEnd === '' && dateStart !== '') {
+        // Filter por type and fecha inicial
+        let start = new Date(dateStart)
+        let end = new Date('2100-01-01')
+
+        const dias = 1
+        start.setDate(start.getDate() + dias)
+        end.setDate(end.getDate() + dias)
+        return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true).where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(15)
+      }
     }
 
+    // Filter por all and Date start - Date end
+    if (dateStart !== '' && dateEnd !== '' && type === 'all') {
+      let start = new Date(dateStart)
+      let end = new Date(dateEnd)
+
+      const dias = 1
+      start.setDate(start.getDate() + dias)
+      end.setDate(end.getDate() + dias)
+      // console.log(start)
+      // console.log(end)
+      return this.db.collection('mantenimientos').where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(15)
+    } else if (dateStart === '' && dateEnd !== '') {
+      // Filter por all and Date end
+      let start = new Date('2000-01-01')
+      let end = new Date(dateEnd)
+
+      const dias = 1
+      start.setDate(start.getDate() + dias)
+      end.setDate(end.getDate() + dias)
+      return this.db.collection('mantenimientos').where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(15)
+    } else if (dateEnd === '' && dateStart !== '') {
+      // Filter por all and Date start
+      let start = new Date(dateStart)
+      let end = new Date('2100-01-01')
+
+      const dias = 1
+      start.setDate(start.getDate() + dias)
+      end.setDate(end.getDate() + dias)
+      return this.db.collection('mantenimientos').where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(15)
+    }
+
+    // Filter por all sin dates
     return this.db.collection('mantenimientos').orderBy('fecha', 'desc').limit(15)
   }
 

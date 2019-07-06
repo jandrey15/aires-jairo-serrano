@@ -31,6 +31,8 @@ class Admin extends Component {
     this.observacionesText = React.createRef()
 
     this.tipoSelectFilter = React.createRef()
+    this.fechaInputStart = React.createRef()
+    this.fechaInputEnd = React.createRef()
   }
 
   static async getInitialProps ({ pathname }) {
@@ -90,6 +92,7 @@ class Admin extends Component {
   componentWillUnmount () {
     this.fireBaseListener && this.fireBaseListener()
     this.unsubscribe && this.unsubscribe()
+    this.unsubscribeFilter && this.unsubscribeFilter()
   }
 
   handleSignOut = event => {
@@ -166,9 +169,13 @@ class Admin extends Component {
     event.preventDefault()
     const tipo = this.tipoSelectFilter.current.value
     // console.log(tipo)
+    const dateStart = this.fechaInputStart.current.value
+    const dateEnd = this.fechaInputEnd.current.value
+    // console.log(dateStart)
+    // console.log(dateEnd)
 
-    this.firebase
-      .doFilterType(tipo)
+    this.unsubscribeFilter = this.firebase
+      .doFilterType(tipo, dateStart, dateEnd)
       .onSnapshot((querySnapshot) => {
         let data = []
         querySnapshot.forEach(doc => {
@@ -242,6 +249,8 @@ class Admin extends Component {
                   <option value='pr'>Preventivo</option>
                   <option value='cr'>Correctivo</option>
                 </select>
+                <input type='date' name='fechaStart' ref={this.fechaInputStart} />
+                <input type='date' name='fechaEnd' ref={this.fechaInputEnd} />
                 <button onClick={this.handleFilter}>Filter</button>
               </form>
               <table>
