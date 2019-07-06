@@ -209,6 +209,10 @@ class Firebase {
   // https://365airsoft.com/es/questions/1617509/firestore-consulta-por-rango-de-fechas?utm_source=programandonet.com&utm_medium=Redirect
 
   // doFilterTypeCr = () => this.db.collection('mantenimientos').where('tipo.cr', '==', true)
+
+  doSearchDocuments = () => {
+    return this.db.collection('mantenimientos').orderBy('fecha', 'desc').limit(15)
+  }
 }
 
 export default Firebase

@@ -33,6 +33,8 @@ class Admin extends Component {
     this.tipoSelectFilter = React.createRef()
     this.fechaInputStart = React.createRef()
     this.fechaInputEnd = React.createRef()
+
+    this.searchInput = React.createRef()
   }
 
   static async getInitialProps ({ pathname }) {
@@ -176,7 +178,7 @@ class Admin extends Component {
 
     this.unsubscribeFilter = this.firebase
       .doFilterType(tipo, dateStart, dateEnd)
-      .onSnapshot((querySnapshot) => {
+      .onSnapshot(querySnapshot => {
         let data = []
         querySnapshot.forEach(doc => {
           data.push({ ...doc.data(), id: doc.id })
@@ -184,6 +186,33 @@ class Admin extends Component {
         // console.log(data)
         this.setState({
           data: data
+        })
+      })
+  }
+
+  onSubmitSearch = event => {
+    event.preventDefault()
+    const search = this.searchInput.current.value
+    // console.log(this.searchInput.current.value)
+
+    this.unsubscribeSearch = this.firebase
+      .doSearchDocuments()
+      .onSnapshot(querySnapshot => {
+        // let data = []
+        let results = []
+        querySnapshot.forEach(doc => {
+          // console.log(doc.data().equipo)
+          const equipo = doc.data().equipo.toLowerCase()
+          const query = search.toLowerCase()
+          if (equipo.includes(query)) {
+            // console.log(item);
+            results.push({ ...doc.data(), id: doc.id })
+          }
+          // data.push({ ...doc.data(), id: doc.id })
+        })
+        // console.log(results)
+        this.setState({
+          data: results
         })
       })
   }
@@ -239,20 +268,26 @@ class Admin extends Component {
           </button>
         </form>
 
+        <form id='filter'>
+          <label htmlFor='tipo'>Tipo de mantenimiento</label>
+          <select name='tipo' id='tipo' ref={this.tipoSelectFilter}>
+            <option value='all'>Todos</option>
+            <option value='pr'>Preventivo</option>
+            <option value='cr'>Correctivo</option>
+          </select>
+          <input type='date' name='fechaStart' ref={this.fechaInputStart} />
+          <input type='date' name='fechaEnd' ref={this.fechaInputEnd} />
+          <button onClick={this.handleFilter}>Filter</button>
+        </form>
+
+        <form id='search' onSubmit={this.onSubmitSearch}>
+          <input type='text' name='search' placeholder='Equipo o ubicación' ref={this.searchInput} />
+          <button className='btn__searc' type='submit'>Buscar</button>
+        </form>
+
         {
           data.length > 0 ? (
             <section className='data__cocinas'>
-              <form id='filter'>
-                <label htmlFor='tipo'>Tipo de mantenimiento</label>
-                <select name='tipo' id='tipo' ref={this.tipoSelectFilter}>
-                  <option value='all'>Todos</option>
-                  <option value='pr'>Preventivo</option>
-                  <option value='cr'>Correctivo</option>
-                </select>
-                <input type='date' name='fechaStart' ref={this.fechaInputStart} />
-                <input type='date' name='fechaEnd' ref={this.fechaInputEnd} />
-                <button onClick={this.handleFilter}>Filter</button>
-              </form>
               <table>
                 <thead>
                   <tr>
