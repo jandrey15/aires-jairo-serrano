@@ -121,10 +121,10 @@ class Firebase {
       })
   }
 
-  doGetAllDocuments = () => this.db.collection('mantenimientos').orderBy('fecha', 'desc').limit(15)
+  doGetAllDocuments = () => this.db.collection('mantenimientos').orderBy('fecha', 'desc').limit(50)
 
   doGetDocument = (id) => this.db.collection('mantenimientos').doc(id).get()
-  // doGetAllCocina = () => this.db.collection('cocina').orderBy('fecha', 'desc').limit(15).get()
+  // doGetAllCocina = () => this.db.collection('cocina').orderBy('fecha', 'desc').limit(50).get()
   // https://www.djamware.com/post/5bc50ea680aca7466989441d/reactjs-firebase-tutorial-building-firestore-crud-web-application#ch8
 
   doDeleteDocumentDb = (id) => {
@@ -139,7 +139,7 @@ class Firebase {
       // Filter solo por type
       if (dateStart === '' && dateEnd === '') {
         // console.log('ok paso here.')
-        return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true).orderBy('fecha', 'desc').limit(15)
+        return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true).orderBy('fecha', 'desc').limit(50)
       } else if (dateStart !== '' && dateEnd !== '') {
         // Filter por type and fecha inicio and final
         let start = new Date(dateStart)
@@ -148,7 +148,7 @@ class Firebase {
         const dias = 1
         start.setDate(start.getDate() + dias)
         end.setDate(end.getDate() + dias)
-        return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true).where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(15)
+        return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true).where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(50)
       } else if (dateStart === '' && dateEnd !== '') {
         // Filter por type and fecha final
         // console.log('Dates here')
@@ -158,7 +158,7 @@ class Firebase {
         const dias = 1
         start.setDate(start.getDate() + dias)
         end.setDate(end.getDate() + dias)
-        return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true).where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(15)
+        return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true).where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(50)
       } else if (dateEnd === '' && dateStart !== '') {
         // Filter por type and fecha inicial
         let start = new Date(dateStart)
@@ -167,7 +167,7 @@ class Firebase {
         const dias = 1
         start.setDate(start.getDate() + dias)
         end.setDate(end.getDate() + dias)
-        return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true).where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(15)
+        return this.db.collection('mantenimientos').where(`tipo.${type}`, '==', true).where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(50)
       }
     }
 
@@ -181,7 +181,7 @@ class Firebase {
       end.setDate(end.getDate() + dias)
       // console.log(start)
       // console.log(end)
-      return this.db.collection('mantenimientos').where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(15)
+      return this.db.collection('mantenimientos').where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(50)
     } else if (dateStart === '' && dateEnd !== '') {
       // Filter por all and Date end
       let start = new Date('2000-01-01')
@@ -190,7 +190,7 @@ class Firebase {
       const dias = 1
       start.setDate(start.getDate() + dias)
       end.setDate(end.getDate() + dias)
-      return this.db.collection('mantenimientos').where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(15)
+      return this.db.collection('mantenimientos').where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(50)
     } else if (dateEnd === '' && dateStart !== '') {
       // Filter por all and Date start
       let start = new Date(dateStart)
@@ -199,11 +199,11 @@ class Firebase {
       const dias = 1
       start.setDate(start.getDate() + dias)
       end.setDate(end.getDate() + dias)
-      return this.db.collection('mantenimientos').where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(15)
+      return this.db.collection('mantenimientos').where('fecha', '>=', start).where('fecha', '<=', end).orderBy('fecha', 'desc').limit(50)
     }
 
     // Filter por all sin dates
-    return this.db.collection('mantenimientos').orderBy('fecha', 'desc').limit(15)
+    return this.db.collection('mantenimientos').orderBy('fecha', 'desc').limit(50)
   }
 
   // https://365airsoft.com/es/questions/1617509/firestore-consulta-por-rango-de-fechas?utm_source=programandonet.com&utm_medium=Redirect
@@ -211,8 +211,10 @@ class Firebase {
   // doFilterTypeCr = () => this.db.collection('mantenimientos').where('tipo.cr', '==', true)
 
   doSearchDocuments = () => {
-    return this.db.collection('mantenimientos').orderBy('fecha', 'desc').limit(15)
+    return this.db.collection('mantenimientos').orderBy('fecha', 'desc').limit(100)
   }
+
+  doGetDocuments = () => this.db.collection('mantenimientos').orderBy('fecha', 'desc')
 }
 
 export default Firebase

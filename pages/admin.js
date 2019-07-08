@@ -20,7 +20,8 @@ class Admin extends Component {
       actividades: '',
       realizado: '',
       recibido: '',
-      getDocument: {}
+      getDocument: {},
+      total: 0
     }
 
     this.firebase = new Firebase()
@@ -47,9 +48,7 @@ class Admin extends Component {
       if (user) {
         // user está logueado.
         this.setState({
-          loading: false
-        })
-        this.setState({
+          loading: false,
           name: user.displayName
         })
         if (user.photoURL) {
@@ -75,26 +74,13 @@ class Admin extends Component {
           data: data
         })
       })
-
-    // .then((querySnapshot) => {
-    //   let data = []
-    //   querySnapshot.forEach(doc => {
-    //     data.push({ ...doc.data(), id: doc.id })
-    //   })
-    //   console.log(data)
-    //   this.setState({
-    //     data: data
-    //   })
-    // })
-    // .catch(error => {
-    //   console.error('Error getting document:', error)
-    // })
   }
 
   componentWillUnmount () {
     this.fireBaseListener && this.fireBaseListener()
     this.unsubscribe && this.unsubscribe()
     this.unsubscribeFilter && this.unsubscribeFilter()
+    this.unsubscribeSearch && this.unsubscribeSearch()
   }
 
   handleSignOut = event => {
@@ -216,6 +202,34 @@ class Admin extends Component {
         })
       })
   }
+
+  // nextItems = event => {
+  //   event.preventDefault()
+
+  //   const firebase = this.firebase
+
+  //   const first = this.firebase.doGetDocuments().limit(1)
+
+  //   first.get().then((documentSnapshots) => {
+  //     // Get the last visible document
+  //     var lastVisible = documentSnapshots.docs[documentSnapshots.docs.length - 1]
+  //     // console.log('last', lastVisible)
+  //     const next = firebase.doGetDocuments()
+  //       .startAfter(lastVisible)
+  //       .limit(15)
+  //     next.onSnapshot(querySnapshot => {
+  //       let data = []
+  //       querySnapshot.forEach(doc => {
+  //         // console.log(doc)
+  //         data.push({ ...doc.data(), id: doc.id })
+  //       })
+  //       console.log('This is data -> ', data)
+  //       this.setState({
+  //         data: data
+  //       })
+  //     })
+  //   })
+  // }
 
   render () {
     const { loading, id, name, data, equipo, actividades, realizado, recibido } = this.state
