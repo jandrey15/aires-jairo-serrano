@@ -6,7 +6,6 @@ class Add extends Component {
     super(props)
 
     this.state = {
-      update: false,
       data: [],
       equipo: '',
       actividades: '',

@@ -6,6 +6,8 @@ import Link from 'next/link'
 import Edit from '../components/containers/Edit'
 import ListDocuments from '../components/ListDocuments'
 import Add from '../components/containers/Add'
+import { Header } from 'semantic-ui-react'
+import HeaderContent from '../components/Header'
 
 class Admin extends Component {
   constructor (props) {
@@ -181,8 +183,9 @@ class Admin extends Component {
 
     return (
       <Layout title='Admin'>
+        <HeaderContent name={name} />
         <div className='container'>
-          <h3>Hello admin - {name}</h3>
+          {/* <h3>Hello admin - {name}</h3> */}
           <button type='button' onClick={this.handleSignOut}>
             Sign Out
           </button>
@@ -225,47 +228,7 @@ class Admin extends Component {
           <a >signup</a>
         </Link>
         <style jsx>{`
-          .container {
-            max-width: 500px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            height: 20vh;
-            align-items: center;
-            justify-content: center;
-          }
-
-          #form__add {
-            margin: 150px auto;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-          }
-
-          #form__add button {
-            cursor: not-allowed;
-          }
-
-          #form__add .active {
-            cursor: pointer;
-          }
-
-          .data__cocinas {
-            max-width: 800px;
-            margin: 0 auto;
-            overflow-x: scroll;
-          }
-
-          .data__cocinas table {
-            border-collapse: separate;
-            border-spacing: 10px 5px;
-            table-layout: fixed;
-            width: 800px;
-          }
-
-          .data__cocinas th, .data__cocinas td {
-              width: 150px;
-          }
+          
         `}</style>
       </Layout>
     )
