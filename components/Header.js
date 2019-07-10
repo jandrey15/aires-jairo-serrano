@@ -14,7 +14,7 @@ class HeaderContent extends Component {
       <header>
         <Container>
           <Menu size='large'>
-            <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick} />
+            <Menu.Item name='Admin' active={activeItem === 'home'} onClick={this.handleItemClick} />
             {/* <Menu.Item
               name='messages'
               active={activeItem === 'messages'}

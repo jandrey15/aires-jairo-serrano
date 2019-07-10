@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import Router from 'next/router'
 import Layout from '../components/Layout'
 import Firebase from '../firebase'
+import { Button, Container, Form, Grid, Segment, Message } from 'semantic-ui-react'
+import Loading from '../components/Loading'
 
 class Home extends Component {
   constructor (props) {
@@ -62,8 +64,11 @@ class Home extends Component {
         }
       })
       .catch(error => {
+        console.error(error)
         // Si pasa algo o esta mal el pass.
-        this.setState({ error })
+        this.setState({
+          error: 'La contraseña no es válida o el usuario no tiene una contraseña.'
+        })
       })
 
     event.preventDefault()
@@ -79,36 +84,44 @@ class Home extends Component {
     const isInvalid = password === '' || email === ''
     // console.log(isInvalid)
     if (loading) {
-      return <span>Loading...</span>
+      return <Loading />
     }
 
     return (
       <Layout title='Login'>
-        <div className='form'>
-          <form onSubmit={this.onSubmit}>
-            <input
-              name='email'
-              value={email}
-              onChange={this.onChange}
-              type='text'
-              placeholder='Email Address'
-            />
-            <input
-              name='password'
-              value={password}
-              onChange={this.onChange}
-              type='password'
-              placeholder='Password'
-            />
-            <button disabled={isInvalid} type='submit'>
-            Sign In
-            </button>
+        <section id='Login'>
+          <Container>
+            <Segment placeholder>
+              <Grid relaxed='very' stackable>
+                <Grid.Column>
+                  <Form onSubmit={this.onSubmit}>
+                    <Form.Input icon='user' iconPosition='left' label='Username' name='email'
+                      value={email}
+                      onChange={this.onChange}
+                      type='text'
+                      placeholder='Correo electrónico' />
+                    <Form.Input icon='lock' iconPosition='left' label='Password'name='password'
+                      value={password}
+                      onChange={this.onChange}
+                      type='password'
+                      placeholder='Contraseña' />
 
-            {error && <p>{error.message}</p>}
-          </form>
-        </div>
+                    <Button content='Iniciar sesión' primary disabled={isInvalid} />
+
+                  </Form>
+                </Grid.Column>
+              </Grid>
+            </Segment>
+            {error && (
+              <Message negative>
+                <Message.Header>{error}</Message.Header>
+                <p>comuniquese con el administrador</p>
+              </Message>
+            )}
+          </Container>
+        </section>
         <style jsx>{`
-          .form {
+          #Login {
             max-width: 500px;
             margin: 0 auto;
             display: flex;

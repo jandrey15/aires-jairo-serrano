@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Edit from '../components/containers/Edit'
 import ListDocuments from '../components/ListDocuments'
 import Add from '../components/containers/Add'
-import { Header } from 'semantic-ui-react'
+import Loading from '../components/Loading'
 import HeaderContent from '../components/Header'
 
 class Admin extends Component {
@@ -178,7 +178,7 @@ class Admin extends Component {
     const { loading, id, name, data } = this.state
 
     if (loading) {
-      return <span>Loading...</span>
+      return <Loading />
     }
 
     return (
