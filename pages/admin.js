@@ -183,13 +183,7 @@ class Admin extends Component {
 
     return (
       <Layout title='Admin'>
-        <HeaderContent name={name} />
-        <div className='container'>
-          {/* <h3>Hello admin - {name}</h3> */}
-          <button type='button' onClick={this.handleSignOut}>
-            Sign Out
-          </button>
-        </div>
+        <HeaderContent name={name} handleSignOut={this.handleSignOut} />
 
         <Add />
 
