@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Container, Menu, Dropdown } from 'semantic-ui-react'
 
-class HeaderContent extends Component {
+class Header extends Component {
   state = { activeItem: 'home' }
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
@@ -42,4 +42,4 @@ class HeaderContent extends Component {
   }
 }
 
-export default HeaderContent
+export default Header

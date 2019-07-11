@@ -7,7 +7,8 @@ import Edit from '../components/containers/Edit'
 import ListDocuments from '../components/ListDocuments'
 import Add from '../components/containers/Add'
 import Loading from '../components/Loading'
-import HeaderContent from '../components/Header'
+import Header from '../components/Header'
+import { Divider, Grid, Segment, Container, Form, Input } from 'semantic-ui-react'
 
 class Admin extends Component {
   constructor (props) {
@@ -19,10 +20,7 @@ class Admin extends Component {
       update: false,
       id: null,
       data: [],
-      equipo: '',
-      actividades: '',
-      realizado: '',
-      recibido: '',
+      search: null,
       getDocument: {},
       total: 0
     }
@@ -34,7 +32,7 @@ class Admin extends Component {
     this.fechaInputStart = React.createRef()
     this.fechaInputEnd = React.createRef()
 
-    this.searchInput = React.createRef()
+    // this.searchInput = React.createRef()
   }
 
   static async getInitialProps ({ pathname }) {
@@ -85,6 +83,10 @@ class Admin extends Component {
   handleSignOut = event => {
     this.firebase.doSignOut()
     event.preventDefault()
+  }
+
+  onChange = event => {
+    this.setState({ [event.target.name]: event.target.value })
   }
 
   handleEdit = (id, event) => {
@@ -149,8 +151,8 @@ class Admin extends Component {
 
   onSubmitSearch = event => {
     event.preventDefault()
-    const search = this.searchInput.current.value
-    // console.log(this.searchInput.current.value)
+    const { search } = this.state
+    // console.log(search)
 
     this.unsubscribeSearch = this.firebase
       .doSearchDocuments()
@@ -183,9 +185,41 @@ class Admin extends Component {
 
     return (
       <Layout title='Admin'>
-        <HeaderContent name={name} handleSignOut={this.handleSignOut} />
+        <Header name={name} handleSignOut={this.handleSignOut} />
+        <Container>
+          <Segment placeholder>
+            <Grid columns={2} stackable textAlign='center'>
+              <Divider vertical>Or</Divider>
 
-        <Add />
+              <Grid.Row verticalAlign='middle'>
+                <Grid.Column>
+
+                  {/* <Search placeholder='Search countries...' /> */}
+                  {/* <form id='search' onSubmit={this.onSubmitSearch}>
+                    <input type='text' name='search' placeholder='Equipo o ubicación' ref={this.searchInput} />
+                    <button className='btn__searc' type='submit'>Buscar</button>
+                  </form> */}
+                  <Form onSubmit={this.onSubmitSearch}>
+                    <Input
+                      action={{ color: 'blue', content: 'Buscar' }}
+                      icon='search'
+                      iconPosition='left'
+                      type='text'
+                      name='search'
+                      placeholder='Equipo o ubicación'
+                      onChange={this.onChange}
+                    />
+                  </Form>
+                </Grid.Column>
+
+                <Grid.Column>
+                  {/* <Button primary>Create</Button> */}
+                  <Add />
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+          </Segment>
+        </Container>
 
         <form id='filter'>
           <label htmlFor='tipo'>Tipo de mantenimiento</label>
@@ -197,11 +231,6 @@ class Admin extends Component {
           <input type='date' name='fechaStart' ref={this.fechaInputStart} />
           <input type='date' name='fechaEnd' ref={this.fechaInputEnd} />
           <button onClick={this.handleFilter}>Filter</button>
-        </form>
-
-        <form id='search' onSubmit={this.onSubmitSearch}>
-          <input type='text' name='search' placeholder='Equipo o ubicación' ref={this.searchInput} />
-          <button className='btn__searc' type='submit'>Buscar</button>
         </form>
 
         {

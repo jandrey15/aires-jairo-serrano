@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Firebase from '../../firebase'
-import { Button, Modal, Container, Form, Input, TextArea, Select } from 'semantic-ui-react'
+import { Button, Modal, Container, Form, Input, TextArea, Select, Message } from 'semantic-ui-react'
 
 class Add extends Component {
   constructor (props) {
@@ -15,8 +15,10 @@ class Add extends Component {
       fecha: '',
       cantidad: '',
       observaciones: '',
+      tipo: '',
       getDocument: {},
-      open: false
+      open: false,
+      error: null
     }
 
     this.firebase = new Firebase()
@@ -32,7 +34,17 @@ class Add extends Component {
     return { pathname }
   }
 
-  onChange = event => {
+  onChange = (event, data) => {
+    console.log(data)
+    if (data === undefined) {
+      this.setState({ [event.target.name]: event.target.value })
+    } else if (data.name === 'tipo') {
+      // console.log(data.value)
+      this.setState({
+        tipo: data.value
+      })
+    }
+
     this.setState({ [event.target.name]: event.target.value })
   }
 
@@ -40,22 +52,22 @@ class Add extends Component {
     event.preventDefault()
     const { equipo, actividades, realizado, recibido, fecha, cantidad, tipo, observaciones } = this.state
     const user = this.firebase.auth.currentUser
-
-    // const cantidad = this.cantidadInput.current.value
-    // const fecha = this.fechaInput.current.value
-    // const tipo = this.tipoSelect.current.value
-    // const observaciones = this.observacionesText.current.value
+    console.log(tipo)
 
     if (user == null) {
       console.warn('Para crear el document debes estar autenticado')
     } else {
       this.firebase
         .doCreateDocumentDb(user.uid, equipo, fecha, actividades, cantidad, tipo, observaciones, realizado, recibido)
-        .then(function (docRef) {
+        .then(docRef => {
           console.log('Document written with ID: ', docRef.id)
+          this.close()
         })
-        .catch(function (error) {
+        .catch(error => {
           console.error('Error adding document: ', error)
+          this.setState({
+            error: 'Error al tratar de agregar el mantenimiento.'
+          })
         })
     }
   }
@@ -64,13 +76,13 @@ class Add extends Component {
   close = () => this.setState({ open: false })
 
   render () {
-    const { equipo, actividades, realizado, recibido, open } = this.state
+    const { equipo, actividades, realizado, recibido, open, error, tipo } = this.state
 
     const isInvalid = equipo === '' || actividades === '' || realizado === '' || recibido === ''
 
     const typeOptions = [
-      { key: 'p', text: 'Preventivo', value: 'pr' },
-      { key: 'c', text: 'Correctivo', value: 'cr' }
+      { key: 'pr', text: 'Preventivo', value: 'pr' },
+      { key: 'cr', text: 'Correctivo', value: 'cr' }
     ]
 
     return (
@@ -146,16 +158,21 @@ class Add extends Component {
                   </Form.Group>
 
                   <Form.Group size='mini'>
-                    <Form.Field
+                    <Button
                       id='form-button-control-public'
-                      control={Button}
-                      content='Agregar'
+                      primary
                       disabled={isInvalid}
                       className={!isInvalid ? 'active' : ''}
-                    />
+                      type='submit'
+                    >Agregar</Button>
                     <Button content='Cancelar' onClick={this.close} color='red' />
                   </Form.Group>
-
+                  {error && (
+                    <Message negative>
+                      <Message.Header>{error}</Message.Header>
+                      <p>Comuniquese con el administrador</p>
+                    </Message>
+                  )}
                 </Form>
                 {/* <form id='form__add' onSubmit={this.onSubmit}>
                   <label htmlFor='equipo'>Equipo</label>

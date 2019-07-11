@@ -13,6 +13,7 @@ class Home extends Component {
       email: '',
       password: '',
       error: null,
+      errorMessage: null,
       loading: true
     }
     this.firebase = new Firebase()
@@ -67,7 +68,8 @@ class Home extends Component {
         console.error(error)
         // Si pasa algo o esta mal el pass.
         this.setState({
-          error: 'La contraseña no es válida o el usuario no tiene una contraseña.'
+          errorMessage: 'La contraseña no es válida o el usuario no tiene una contraseña.',
+          error
         })
       })
 
@@ -79,7 +81,7 @@ class Home extends Component {
   }
 
   render () {
-    const { email, password, error, loading } = this.state
+    const { email, password, error, errorMessage, loading } = this.state
 
     const isInvalid = password === '' || email === ''
     // console.log(isInvalid)
@@ -99,12 +101,12 @@ class Home extends Component {
                       value={email}
                       onChange={this.onChange}
                       type='text'
-                      placeholder='Correo electrónico' />
+                      placeholder='Correo electrónico' error={error} />
                     <Form.Input icon='lock' iconPosition='left' label='Password'name='password'
                       value={password}
                       onChange={this.onChange}
                       type='password'
-                      placeholder='Contraseña' />
+                      placeholder='Contraseña' error={error} />
 
                     <Button content='Iniciar sesión' primary disabled={isInvalid} />
 
@@ -114,8 +116,8 @@ class Home extends Component {
             </Segment>
             {error && (
               <Message negative>
-                <Message.Header>{error}</Message.Header>
-                <p>comuniquese con el administrador</p>
+                <Message.Header>{errorMessage}</Message.Header>
+                <p>Comuniquese con el administrador</p>
               </Message>
             )}
           </Container>
