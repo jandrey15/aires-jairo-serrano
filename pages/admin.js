@@ -8,7 +8,7 @@ import ListDocuments from '../components/ListDocuments'
 import Add from '../components/containers/Add'
 import Loading from '../components/Loading'
 import Header from '../components/Header'
-import { Divider, Grid, Segment, Container, Form, Input } from 'semantic-ui-react'
+import { Divider, Grid, Segment, Container, Form, Input, Button, Select } from 'semantic-ui-react'
 
 class Admin extends Component {
   constructor (props) {
@@ -22,6 +22,7 @@ class Admin extends Component {
       data: [],
       search: null,
       getDocument: {},
+      tipoFilter: 'all',
       total: 0
     }
 
@@ -128,7 +129,7 @@ class Admin extends Component {
 
   handleFilter = event => {
     event.preventDefault()
-    const tipo = this.tipoSelectFilter.current.value
+    const tipo = this.state.tipoFilter
     // console.log(tipo)
     const dateStart = this.fechaInputStart.current.value
     const dateEnd = this.fechaInputEnd.current.value
@@ -176,6 +177,16 @@ class Admin extends Component {
       })
   }
 
+  onChangeFilter = (event, data) => {
+    // console.log(data.value)
+    if (data.name === 'tipoFilter') {
+      // console.log(data.value)
+      this.setState({
+        tipoFilter: data.value
+      })
+    }
+  }
+
   render () {
     const { loading, id, name, data } = this.state
 
@@ -183,75 +194,103 @@ class Admin extends Component {
       return <Loading />
     }
 
+    const typeOptions = [
+      { key: 'all', text: 'Todos', value: 'all' },
+      { key: 'pr', text: 'Preventivo', value: 'pr' },
+      { key: 'cr', text: 'Correctivo', value: 'cr' }
+    ]
+
     return (
       <Layout title='Admin'>
         <Header name={name} handleSignOut={this.handleSignOut} />
-        <Container>
-          <Segment placeholder>
-            <Grid columns={2} stackable textAlign='center'>
-              <Divider vertical>Or</Divider>
+        <section className='controls'>
+          <Container>
+            <Segment basic textAlign='center'>
+              <Grid columns={2} stackable textAlign='center'>
+                <Grid.Row>
+                  <Grid.Column>
+                    <Form id='filter'>
+                      <Form.Group widths='equal'>
+                        <Form.Field
+                          control={Select}
+                          options={typeOptions}
+                          label={{ children: 'Tipo de mantenimiento', htmlFor: 'form-select-control-tipo' }}
+                          placeholder='Todos'
+                          search
+                          searchInput={{ id: 'form-select-control-tipo' }}
+                          name='tipoFilter'
+                          onChange={this.onChangeFilter}
+                        />
+                      </Form.Group>
+                      <Form.Group widths='equal'>
+                        <Form.Field>
+                          <label htmlFor='Fecha'>Fecha inicial</label>
+                          <input type='date' name='fechaStart' ref={this.fechaInputStart} />
+                        </Form.Field>
+                        <Form.Field>
+                          <label htmlFor='Fecha'>Fecha final</label>
+                          <input type='date' name='fechaEnd' ref={this.fechaInputEnd} />
+                        </Form.Field>
+                      </Form.Group>
+                      <Button
+                        onClick={this.handleFilter}
+                        primary
+                      >Filtrar</Button>
+                    </Form>
+                  </Grid.Column>
 
-              <Grid.Row verticalAlign='middle'>
-                <Grid.Column>
+                  <Grid.Column verticalAlign='middle'>
+                    <Add />
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
 
-                  {/* <Search placeholder='Search countries...' /> */}
-                  {/* <form id='search' onSubmit={this.onSubmitSearch}>
-                    <input type='text' name='search' placeholder='Equipo o ubicación' ref={this.searchInput} />
-                    <button className='btn__searc' type='submit'>Buscar</button>
-                  </form> */}
-                  <Form onSubmit={this.onSubmitSearch}>
-                    <Input
-                      action={{ color: 'blue', content: 'Buscar' }}
-                      icon='search'
-                      iconPosition='left'
-                      type='text'
-                      name='search'
-                      placeholder='Equipo o ubicación'
-                      onChange={this.onChange}
-                    />
-                  </Form>
-                </Grid.Column>
+              <Divider horizontal>Or</Divider>
 
-                <Grid.Column>
-                  {/* <Button primary>Create</Button> */}
-                  <Add />
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-          </Segment>
-        </Container>
-
-        <form id='filter'>
-          <label htmlFor='tipo'>Tipo de mantenimiento</label>
-          <select name='tipo' id='tipo' ref={this.tipoSelectFilter}>
-            <option value='all'>Todos</option>
-            <option value='pr'>Preventivo</option>
-            <option value='cr'>Correctivo</option>
-          </select>
-          <input type='date' name='fechaStart' ref={this.fechaInputStart} />
-          <input type='date' name='fechaEnd' ref={this.fechaInputEnd} />
-          <button onClick={this.handleFilter}>Filter</button>
-        </form>
-
+              <div className='form__search'>
+                <Form onSubmit={this.onSubmitSearch} widths='equal'>
+                  <Input
+                    action={{ color: 'blue', content: 'Buscar' }}
+                    icon='search'
+                    iconPosition='left'
+                    type='text'
+                    name='search'
+                    placeholder='Equipo o ubicación'
+                    fluid
+                    onChange={this.onChange}
+                  />
+                </Form>
+              </div>
+            </Segment>
+          </Container>
+        </section>
         {
           data.length > 0 ? (
             <ListDocuments data={data} handleEdit={this.handleEdit} handleDelete={this.handleDelete} />
           ) : (
-            <h2>No hay datos</h2>
+            <Container textAlign='center'>
+              <h2>No hay datos</h2>
+            </Container>
           )
         }
         <hr />
-        {
+        {/* {
           this.state.update && (
             <Edit {...this.state.getDocument} id={id} />
           )
-        }
+        } */}
 
-        <Link href='/signup'>
+        {/* <Link href='/signup'>
           <a >signup</a>
-        </Link>
+        </Link> */}
         <style jsx>{`
-          
+          .controls {
+            margin: 50px 0;
+          }
+          .form__search {
+            margin: 30px auto 0;
+            max-width: 500px;
+          }
         `}</style>
       </Layout>
     )

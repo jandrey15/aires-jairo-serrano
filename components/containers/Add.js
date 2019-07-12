@@ -35,7 +35,7 @@ class Add extends Component {
   }
 
   onChange = (event, data) => {
-    console.log(data)
+    // console.log(data)
     if (data === undefined) {
       this.setState({ [event.target.name]: event.target.value })
     } else if (data.name === 'tipo') {
@@ -52,7 +52,7 @@ class Add extends Component {
     event.preventDefault()
     const { equipo, actividades, realizado, recibido, fecha, cantidad, tipo, observaciones } = this.state
     const user = this.firebase.auth.currentUser
-    console.log(tipo)
+    // console.log(tipo)
 
     if (user == null) {
       console.warn('Para crear el document debes estar autenticado')
@@ -76,7 +76,7 @@ class Add extends Component {
   close = () => this.setState({ open: false })
 
   render () {
-    const { equipo, actividades, realizado, recibido, open, error, tipo } = this.state
+    const { equipo, actividades, realizado, recibido, open, error } = this.state
 
     const isInvalid = equipo === '' || actividades === '' || realizado === '' || recibido === ''
 
@@ -87,7 +87,6 @@ class Add extends Component {
 
     return (
       <section id='Add'>
-
         <Container>
           <Modal open={open}
             onOpen={this.open}
@@ -101,7 +100,7 @@ class Add extends Component {
                       id='form-input-control-equipo'
                       control={Input}
                       label='Equipo y ubicación'
-                      name='equipo' placeholder='Equipo y ubicación' onChange={this.onChange}
+                      name='equipo' placeholder='Equipo - ubicación' onChange={this.onChange}
                     />
                     <Form.Field>
                       <label htmlFor='Fecha'>Fecha</label>
@@ -126,8 +125,8 @@ class Add extends Component {
                     <Form.Field
                       control={Select}
                       options={typeOptions}
-                      label={{ children: 'Preventivo', htmlFor: 'form-select-control-tipo' }}
-                      placeholder='Tipo de mantenimiento'
+                      label={{ children: 'Tipo de mantenimiento', htmlFor: 'form-select-control-tipo' }}
+                      placeholder='Preventivo'
                       search
                       searchInput={{ id: 'form-select-control-tipo' }}
                       name='tipo'
@@ -174,43 +173,10 @@ class Add extends Component {
                     </Message>
                   )}
                 </Form>
-                {/* <form id='form__add' onSubmit={this.onSubmit}>
-                  <label htmlFor='equipo'>Equipo</label>
-                  <input type='text' id='equipo' name='equipo' placeholder='Equipo y ubicación' onChange={this.onChange} />
-
-                  <label htmlFor='fecha'>Fecha</label>
-                  <input type='date' id='fecha' name='fecha' ref={this.fechaInput} />
-
-                  <label htmlFor='actividades'>Actividades</label>
-                  <textarea name='actividades' id='actividades' cols='30' rows='10' onChange={this.onChange} placeholder='Actividades efectuadas' />
-
-                  <label htmlFor='cantidad'>Cantidad</label>
-                  <input type='text' id='cantidad' name='cantidad' placeholder='Cantidad cambio refrigerante' ref={this.cantidadInput} />
-
-                  <label htmlFor='tipo'>Tipo de mantenimiento</label>
-                  <select name='tipo' id='tipo' ref={this.tipoSelect}>
-                    <option value='pr'>Preventivo</option>
-                    <option value='cr'>Correctivo</option>
-                  </select>
-
-                  <label htmlFor='observaciones'>Observaciones</label>
-                  <textarea name='observaciones' id='observaciones' cols='30' rows='10' ref={this.observacionesText} />
-
-                  <label htmlFor='realizado'>Realizado</label>
-                  <input type='text' id='realizado' name='realizado' placeholder='Realizado por' onChange={this.onChange} />
-
-                  <label htmlFor='recibido'>Recibido</label>
-                  <input type='text' id='recibido' name='recibido' placeholder='Recibido por' onChange={this.onChange} />
-
-                  <button disabled={isInvalid} className={!isInvalid ? 'active' : ''} type='submit'>
-            Agregar
-                  </button>
-                </form> */}
               </Modal.Description>
             </Modal.Content>
           </Modal>
         </Container>
-
       </section>
     )
   }
