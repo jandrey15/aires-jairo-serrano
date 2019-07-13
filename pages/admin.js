@@ -8,7 +8,7 @@ import ListDocuments from '../components/ListDocuments'
 import Add from '../components/containers/Add'
 import Loading from '../components/Loading'
 import Header from '../components/Header'
-import { Divider, Grid, Segment, Container, Form, Input, Button, Select } from 'semantic-ui-react'
+import { Divider, Grid, Segment, Container, Form, Input, Button, Select, Confirm } from 'semantic-ui-react'
 
 class Admin extends Component {
   constructor (props) {
@@ -23,6 +23,9 @@ class Admin extends Component {
       search: null,
       getDocument: {},
       tipoFilter: 'all',
+      open: false,
+      openDelete: false,
+      idDelete: null,
       total: 0
     }
 
@@ -98,10 +101,17 @@ class Admin extends Component {
       .doGetDocument(id)
       .then(doc => {
         if (doc.exists) {
+          let open = true
+          if (this.state.id === id) {
+            // console.log('ok paso Admin')
+            open = false
+          }
+
           this.setState({
             update: true,
             getDocument: doc.data(),
-            id
+            id,
+            open: open
           })
           console.log('Document data:', doc.data())
         } else {
@@ -114,8 +124,8 @@ class Admin extends Component {
       })
   }
 
-  handleDelete = (id, event) => {
-    event.preventDefault()
+  handleDelete = (id) => {
+    // event.preventDefault()
 
     // console.log(id)
     this.firebase
@@ -187,8 +197,20 @@ class Admin extends Component {
     }
   }
 
+  showDelete = (id) => {
+    this.setState({ openDelete: true, idDelete: id })
+  }
+
+  handleConfirm = () => {
+    this.setState({ result: 'confirmed', openDelete: false })
+    const { idDelete } = this.state
+    this.handleDelete(idDelete)
+  }
+  handleCancel = () => this.setState({ result: 'cancelled', openDelete: false })
+
   render () {
-    const { loading, id, name, data } = this.state
+    const { loading, id, name, data, open, openDelete } = this.state
+    // console.log(open)
 
     if (loading) {
       return <Loading />
@@ -266,23 +288,38 @@ class Admin extends Component {
         </section>
         {
           data.length > 0 ? (
-            <ListDocuments data={data} handleEdit={this.handleEdit} handleDelete={this.handleDelete} />
+            <ListDocuments
+              data={data}
+              showDelete={this.showDelete}
+              handleEdit={this.handleEdit}
+            />
           ) : (
             <Container textAlign='center'>
               <h2>No hay datos</h2>
             </Container>
           )
         }
-        <hr />
-        {/* {
-          this.state.update && (
-            <Edit {...this.state.getDocument} id={id} />
-          )
-        } */}
 
-        {/* <Link href='/signup'>
-          <a >signup</a>
-        </Link> */}
+        <Confirm
+          open={openDelete}
+          onCancel={this.handleCancel}
+          onConfirm={this.handleConfirm}
+          content='¿Estás seguro de eliminar el mantenimiento?'
+        />
+
+        <hr />
+        {
+          this.state.update && (
+            <Edit {...this.state.getDocument} id={id} open={open} />
+          )
+        }
+
+        <Container>
+          <div className='copyright'>
+            <h4>By <a href='https://johnserrano.co' target='_blank'>John Serrano</a></h4>
+            <span><a href='https://twitter.com/Jandrey15' target='_blank'>@jandrey15</a></span>
+          </div>
+        </Container>
         <style jsx>{`
           .controls {
             margin: 50px 0;
@@ -290,6 +327,19 @@ class Admin extends Component {
           .form__search {
             margin: 30px auto 0;
             max-width: 500px;
+          }
+
+          hr {
+            border: 2px solid #e4e4e4;
+            margin: 50px 0 20px;
+          }
+
+          .copyright {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 20px 0;
           }
         `}</style>
       </Layout>

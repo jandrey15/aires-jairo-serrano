@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Util from '../../helpers/util'
 import Firebase from '../../firebase'
-import { Button, Modal, Container, Form, Input, TextArea, Select, Message } from 'semantic-ui-react'
+import { Button, Modal, Container, Form, Input, TextArea, Select, Message, Grid, Portal, Segment } from 'semantic-ui-react'
 
 class Edit extends Component {
   constructor (props) {
@@ -14,7 +14,6 @@ class Edit extends Component {
       newFecha: false,
       dataCocinas: [],
       error: null,
-      open: false,
       ...this.props
     }
     // this.firebase = this.props.firebase
@@ -71,15 +70,21 @@ class Edit extends Component {
         newFecha: false
       })
     }
+
+    if (this.props.open !== prevProps.open) {
+      // console.log('ok paso Edit')
+      this.setState({
+        open: true
+      })
+    }
   }
 
-  open = () => this.setState({ open: true })
-  close = () => this.setState({ open: false })
+  handleClose = () => this.setState({ open: false })
 
   render () {
-    const { equipo, fecha, actividades, cantidad, tipo, observaciones, realizado, recibido, newFecha, error } = this.state
+    const { equipo, fecha, actividades, cantidad, tipo, observaciones, realizado, recibido, newFecha, error, open } = this.state
     // console.log(this.state)
-    console.log(fecha)
+    // console.log(fecha)
 
     const isInvalid = equipo === '' || actividades === '' || realizado === '' || recibido === ''
     // console.log(fecha)
@@ -92,104 +97,111 @@ class Edit extends Component {
     return (
       <section id='Edit'>
         <Container>
-          <Modal
-            open={open}
-            onOpen={this.open}
-            onClose={this.close}
-            trigger={<Button primary content='Editar' />}
-          >
-            <Modal.Header>Editar mantenimiento</Modal.Header>
-            <Modal.Content image>
-              <Modal.Description>
-                <Form onSubmit={this.onSubmit}>
-                  <Form.Group widths='equal'>
-                    <Form.Field
-                      id='form-input-control-equipo'
-                      control={Input}
-                      label='Equipo y ubicación'
-                      name='equipo' placeholder='Equipo - ubicación' onChange={this.onChange}
-                      value={equipo}
-                    />
-                    {/* <Form.Field>
-                      <label htmlFor='Fecha'>Fecha</label>
-                      <input type='date' id='fecha' name='fecha' onChange={this.onChange} value={newFecha || Util.fechaYMD(fecha.toDate())} />
-                    </Form.Field> */}
-                    <Form.Field
-                      id='form-textarea-control-actividades'
-                      control={TextArea}
-                      label='Actividades efectuadas'
-                      name='actividades' onChange={this.onChange} placeholder='Actividades efectuadas'
-                      value={actividades}
-                    />
-                  </Form.Group>
+          <Grid columns={2}>
+            <Grid.Column>
+              <Portal open={open}>
+                <Segment>
+                  <Modal
+                    open={open}
+                    onClose={this.handleClose}
+                  >
+                    <Modal.Header>Editar mantenimiento</Modal.Header>
+                    <Modal.Content image>
+                      <Modal.Description>
+                        <Form onSubmit={this.onSubmit}>
+                          <Form.Group widths='equal'>
+                            <Form.Field
+                              id='form-input-control-equipo'
+                              control={Input}
+                              label='Equipo y ubicación'
+                              name='equipo' placeholder='Equipo - ubicación' onChange={this.onChange}
+                              value={equipo}
+                            />
+                            <Form.Field>
+                              <label htmlFor='Fecha'>Fecha</label>
+                              <input type='date' id='fecha' name='fecha' onChange={this.onChange} value={newFecha || Util.fechaYMD(fecha.toDate())} />
+                            </Form.Field>
+                            <Form.Field
+                              id='form-textarea-control-actividades'
+                              control={TextArea}
+                              label='Actividades efectuadas'
+                              name='actividades' onChange={this.onChange} placeholder='Actividades efectuadas'
+                              value={actividades}
+                            />
+                          </Form.Group>
 
-                  <Form.Group widths='equal'>
-                    <Form.Field
-                      id='form-input-control-cantidad'
-                      control={Input}
-                      label='Cantidad cambio refrigerante'
-                      name='cantidad' placeholder='Cantidad cambio refrigerante' onChange={this.onChange}
-                      value={cantidad}
-                    />
-                    <Form.Field
-                      control={Select}
-                      options={typeOptions}
-                      label={{ children: 'Tipo de mantenimiento', htmlFor: 'form-select-control-tipo' }}
-                      placeholder='Preventivo'
-                      search
-                      searchInput={{ id: 'form-select-control-tipo' }}
-                      name='tipo'
-                      value={tipo.cr || tipo === 'cr' ? 'cr' : tipo.pr || tipo === 'pr' ? 'pr' : ''}
-                      onChange={this.onChange}
-                    />
+                          <Form.Group widths='equal'>
+                            <Form.Field
+                              id='form-input-control-cantidad'
+                              control={Input}
+                              label='Cantidad cambio refrigerante'
+                              name='cantidad' placeholder='Cantidad cambio refrigerante' onChange={this.onChange}
+                              value={cantidad}
+                            />
+                            <Form.Field
+                              control={Select}
+                              options={typeOptions}
+                              label={{ children: 'Tipo de mantenimiento', htmlFor: 'form-select-control-tipo' }}
+                              placeholder='Preventivo'
+                              search
+                              searchInput={{ id: 'form-select-control-tipo' }}
+                              name='tipo'
+                              value={tipo.cr || tipo === 'cr' ? 'cr' : tipo.pr || tipo === 'pr' ? 'pr' : ''}
+                              onChange={this.onChange}
+                            />
 
-                    <Form.Field
-                      id='form-textarea-control-observaciones'
-                      control={TextArea}
-                      label='Observaciones'
-                      name='observaciones' onChange={this.onChange} placeholder='Observaciones'
-                      value={observaciones}
-                    />
-                  </Form.Group>
+                            <Form.Field
+                              id='form-textarea-control-observaciones'
+                              control={TextArea}
+                              label='Observaciones'
+                              name='observaciones' onChange={this.onChange} placeholder='Observaciones'
+                              value={observaciones}
+                            />
+                          </Form.Group>
 
-                  <Form.Group widths='equal'>
-                    <Form.Field
-                      id='form-input-control-realizado'
-                      control={Input}
-                      label='Realizado'
-                      name='realizado' placeholder='Realizado' onChange={this.onChange}
-                      value={realizado}
-                    />
-                    <Form.Field
-                      id='form-input-control-recibido'
-                      control={Input}
-                      label='Recibido'
-                      name='recibido' placeholder='Recibido' onChange={this.onChange}
-                      value={recibido}
-                    />
-                  </Form.Group>
+                          <Form.Group widths='equal'>
+                            <Form.Field
+                              id='form-input-control-realizado'
+                              control={Input}
+                              label='Realizado'
+                              name='realizado' placeholder='Realizado' onChange={this.onChange}
+                              value={realizado}
+                            />
+                            <Form.Field
+                              id='form-input-control-recibido'
+                              control={Input}
+                              label='Recibido'
+                              name='recibido' placeholder='Recibido' onChange={this.onChange}
+                              value={recibido}
+                            />
+                          </Form.Group>
 
-                  <Form.Group size='mini'>
-                    <Button
-                      id='form-button-control-public'
-                      primary
-                      disabled={isInvalid}
-                      className={!isInvalid ? 'active' : ''}
-                      type='submit'
-                    >Editar</Button>
-                    <Button content='Cancelar' onClick={this.close} color='red' />
-                  </Form.Group>
-                  {error && (
-                    <Message negative>
-                      <Message.Header>{error}</Message.Header>
-                      <p>Comuniquese con el administrador</p>
-                    </Message>
-                  )}
-                </Form>
-              </Modal.Description>
-            </Modal.Content>
-          </Modal>
+                          <Form.Group size='mini'>
+                            <Button
+                              id='form-button-control-public'
+                              primary
+                              disabled={isInvalid}
+                              className={!isInvalid ? 'active' : ''}
+                              type='submit'
+                            >Editar</Button>
+                            <Button content='Cancelar' onClick={this.handleClose} negative />
+                          </Form.Group>
+                          {error && (
+                            <Message negative>
+                              <Message.Header>{error}</Message.Header>
+                              <p>Comuniquese con el administrador</p>
+                            </Message>
+                          )}
+                        </Form>
+                      </Modal.Description>
+                    </Modal.Content>
+                  </Modal>
+                </Segment>
+              </Portal>
+            </Grid.Column>
+          </Grid>
         </Container>
+
         {/* <form id='form__add' onSubmit={this.onSubmit}>
           <label htmlFor='equipo'>Equipo</label>
           <input type='text' id='equipo' name='equipo' placeholder='Equipo y ubicación' value={equipo} onChange={this.onChange} />

@@ -18,7 +18,8 @@ class Add extends Component {
       tipo: '',
       getDocument: {},
       open: false,
-      error: null
+      error: null,
+      success: false
     }
 
     this.firebase = new Firebase()
@@ -62,6 +63,12 @@ class Add extends Component {
         .then(docRef => {
           console.log('Document written with ID: ', docRef.id)
           this.close()
+          this.setState({
+            success: true
+          })
+          this.timer = setTimeout(() => {
+            this.setState({ success: false })
+          }, 12000)
         })
         .catch(error => {
           console.error('Error adding document: ', error)
@@ -72,8 +79,16 @@ class Add extends Component {
     }
   }
 
+  componentWillUnmount () {
+    clearTimeout(this.timer)
+  }
+
   open = () => this.setState({ open: true })
   close = () => this.setState({ open: false })
+
+  handleDismiss = () => {
+    this.setState({ success: false })
+  }
 
   render () {
     const { equipo, actividades, realizado, recibido, open, error } = this.state
@@ -176,6 +191,16 @@ class Add extends Component {
               </Modal.Description>
             </Modal.Content>
           </Modal>
+          {
+            this.state.success && (
+              <Message
+                positive
+                onDismiss={this.handleDismiss}
+                header='Guardado exitosamente'
+                content={`Se guardó el siguiente mantenimiento en la base de datos: ${equipo}`}
+              />
+            )
+          }
         </Container>
       </section>
     )

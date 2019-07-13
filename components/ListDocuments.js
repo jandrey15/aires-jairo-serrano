@@ -1,7 +1,7 @@
 import { Header, Table, Container, Responsive, Button, Form } from 'semantic-ui-react'
 import Util from '../helpers/util'
 
-const ListDocuments = ({ data, handleEdit, handleDelete }) => {
+const ListDocuments = ({ data, handleEdit, showDelete }) => {
   return (
     <section id='List__Documents'>
       <Container>
@@ -58,7 +58,7 @@ const ListDocuments = ({ data, handleEdit, handleDelete }) => {
                         </Button>
                       </Form.Group>
                       <Form.Group inline>
-                        <Button size='medium' negative onClick={(e) => handleDelete(data.id, e)}>
+                        <Button size='medium' negative onClick={(e) => showDelete(data.id, e)}>
                           Eliminar
                         </Button>
                       </Form.Group>
