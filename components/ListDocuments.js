@@ -8,15 +8,40 @@ const ListDocuments = ({ data, handleEdit, showDelete }) => {
         <Table celled padded compact size='small'>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell singleLine>Equipo - ubicación</Table.HeaderCell>
-              <Table.HeaderCell>Fecha</Table.HeaderCell>
+              <Responsive as={Table.HeaderCell} singleLine minWidth={Responsive.onlyComputer.minWidth}>
+                Equipo - ubicación
+              </Responsive>
+              <Responsive as={Table.HeaderCell} minWidth={Responsive.onlyComputer.minWidth}>
+                Fecha
+              </Responsive>
+              <Responsive as={Table.HeaderCell} singleLine minWidth={Responsive.onlyComputer.minWidth}>
+                Actividades
+              </Responsive>
+              <Responsive as={Table.HeaderCell} singleLine minWidth={Responsive.onlyComputer.minWidth}>
+                Cantidad
+              </Responsive>
+              <Responsive as={Table.HeaderCell} singleLine minWidth={Responsive.onlyComputer.minWidth}>
+                Tipo de mantenimiento
+              </Responsive>
+              <Responsive as={Table.HeaderCell} singleLine minWidth={Responsive.onlyComputer.minWidth}>
+                Observaciones
+              </Responsive>
+              <Responsive as={Table.HeaderCell} singleLine minWidth={Responsive.onlyComputer.minWidth}>
+                Realizado
+              </Responsive>
+              <Responsive as={Table.HeaderCell} singleLine minWidth={Responsive.onlyComputer.minWidth}>
+                Recibido
+              </Responsive>
+              <Responsive as={Table.HeaderCell} singleLine minWidth={Responsive.onlyComputer.minWidth} />
+              {/* <Table.HeaderCell singleLine></Table.HeaderCell> */}
+              {/* <Table.HeaderCell>Fecha</Table.HeaderCell>
               <Table.HeaderCell>Actividades</Table.HeaderCell>
               <Table.HeaderCell>Cantidad</Table.HeaderCell>
               <Table.HeaderCell>Tipo de mantenimiento</Table.HeaderCell>
               <Table.HeaderCell>Observaciones</Table.HeaderCell>
               <Table.HeaderCell>Realizado</Table.HeaderCell>
               <Table.HeaderCell>Recibido</Table.HeaderCell>
-              <Table.HeaderCell></Table.HeaderCell>
+              <Table.HeaderCell></Table.HeaderCell> */}
             </Table.Row>
           </Table.Header>
 
@@ -30,24 +55,45 @@ const ListDocuments = ({ data, handleEdit, showDelete }) => {
                     </Header>
                   </Responsive>
                   <Responsive as={Table.Cell} minWidth={Responsive.onlyMobile.minWidth}>
+                    <Responsive maxWidth={Responsive.onlyMobile.maxWidth}>
+                      <h4>Fecha</h4>
+                    </Responsive>
                     {Util.obtenerFecha(data.fecha.toDate())}
                   </Responsive>
                   <Responsive as={Table.Cell} minWidth={Responsive.onlyMobile.minWidth}>
+                    <Responsive maxWidth={Responsive.onlyMobile.maxWidth}>
+                      <h4>Actividades</h4>
+                    </Responsive>
                     {data.actividades}
                   </Responsive>
                   <Responsive as={Table.Cell} minWidth={Responsive.onlyMobile.minWidth}>
+                    <Responsive maxWidth={Responsive.onlyMobile.maxWidth}>
+                      <h4>Cantidad</h4>
+                    </Responsive>
                     {data.cantidad}
                   </Responsive>
                   <Responsive as={Table.Cell} minWidth={Responsive.onlyMobile.minWidth}>
+                    <Responsive maxWidth={Responsive.onlyMobile.maxWidth}>
+                      <h4>Tipo de mantenimiento</h4>
+                    </Responsive>
                     {data.tipo.cr ? 'Correctivo' : data.tipo.pr ? 'Preventivo' : ''}
                   </Responsive>
                   <Responsive as={Table.Cell} minWidth={Responsive.onlyMobile.minWidth}>
+                    <Responsive maxWidth={Responsive.onlyMobile.maxWidth}>
+                      <h4>Observaciones</h4>
+                    </Responsive>
                     {data.observaciones}
                   </Responsive>
                   <Responsive as={Table.Cell} minWidth={Responsive.onlyMobile.minWidth}>
+                    <Responsive maxWidth={Responsive.onlyMobile.maxWidth}>
+                      <h4>Realizado</h4>
+                    </Responsive>
                     {data.realizado}
                   </Responsive>
                   <Responsive as={Table.Cell} minWidth={Responsive.onlyMobile.minWidth}>
+                    <Responsive maxWidth={Responsive.onlyMobile.maxWidth}>
+                      <h4>Recibido</h4>
+                    </Responsive>
                     {data.recibido}
                   </Responsive>
                   <Responsive as={Table.Cell} minWidth={Responsive.onlyMobile.minWidth}>

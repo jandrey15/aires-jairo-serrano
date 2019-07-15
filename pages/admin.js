@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import Router from 'next/router'
 import Layout from '../components/Layout'
 import Firebase from '../firebase'
-import Link from 'next/link'
 import Edit from '../components/containers/Edit'
 import ListDocuments from '../components/ListDocuments'
 import Add from '../components/containers/Add'
@@ -55,7 +54,7 @@ class Admin extends Component {
         if (user.photoURL) {
           console.log(user.photoURL)
         } else {
-          console.log('user sin photo')
+          // console.log('user sin photo')
         }
       } else {
         console.info('Iniciar sesión')
