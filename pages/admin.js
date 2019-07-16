@@ -25,6 +25,7 @@ class Admin extends Component {
       open: false,
       openDelete: false,
       idDelete: null,
+      role: null,
       total: 0
     }
 
@@ -51,6 +52,17 @@ class Admin extends Component {
           loading: false,
           name: user.displayName
         })
+
+        this.firebase.doGetUser(user.uid)
+          .then((doc) => {
+            // console.log('Cached document data:', doc.data())
+            const roles = doc.data().roles
+            this.setState({
+              role: roles.admin ? true : !!roles.editor
+            })
+          }).catch((error) => {
+            console.log('Error getting user document:', error)
+          })
         if (user.photoURL) {
           console.log(user.photoURL)
         } else {
@@ -208,7 +220,7 @@ class Admin extends Component {
   handleCancel = () => this.setState({ result: 'cancelled', openDelete: false })
 
   render () {
-    const { loading, id, name, data, open, openDelete } = this.state
+    const { loading, id, name, data, open, openDelete, role } = this.state
     // console.log(open)
 
     if (loading) {
@@ -261,7 +273,9 @@ class Admin extends Component {
                   </Grid.Column>
 
                   <Grid.Column verticalAlign='middle'>
-                    <Add />
+                    {role && (
+                      <Add />
+                    )}
                   </Grid.Column>
                 </Grid.Row>
               </Grid>
@@ -291,6 +305,7 @@ class Admin extends Component {
               data={data}
               showDelete={this.showDelete}
               handleEdit={this.handleEdit}
+              role={role}
             />
           ) : (
             <Container textAlign='center'>

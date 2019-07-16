@@ -64,7 +64,15 @@ class Add extends Component {
           console.log('Document written with ID: ', docRef.id)
           this.close()
           this.setState({
-            success: true
+            success: true,
+            equipo: '',
+            actividades: '',
+            realizado: '',
+            recibido: '',
+            fecha: '',
+            cantidad: '',
+            tipo: '',
+            observaciones: ''
           })
           this.timer = setTimeout(() => {
             this.setState({ success: false })
@@ -116,6 +124,7 @@ class Add extends Component {
                       control={Input}
                       label='Equipo y ubicación'
                       name='equipo' placeholder='Equipo - ubicación' onChange={this.onChange}
+                      required
                     />
                     <Form.Field>
                       <label htmlFor='Fecha'>Fecha</label>
@@ -126,6 +135,7 @@ class Add extends Component {
                       control={TextArea}
                       label='Actividades efectuadas'
                       name='actividades' onChange={this.onChange} placeholder='Actividades efectuadas'
+                      required
                     />
 
                   </Form.Group>
@@ -162,12 +172,14 @@ class Add extends Component {
                       control={Input}
                       label='Realizado'
                       name='realizado' placeholder='Realizado' onChange={this.onChange}
+                      required
                     />
                     <Form.Field
                       id='form-input-control-recibido'
                       control={Input}
                       label='Recibido'
                       name='recibido' placeholder='Recibido' onChange={this.onChange}
+                      required
                     />
                   </Form.Group>
 

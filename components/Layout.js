@@ -11,7 +11,6 @@ const Layout = ({ children, title }) => {
           name='viewport'
           content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'
         />
-        <link rel='stylesheet' href='//cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css' />
       </Head>
 
       {children}

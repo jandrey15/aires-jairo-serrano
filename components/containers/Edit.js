@@ -52,10 +52,13 @@ class Edit extends Component {
       // console.log(id, equipo, fecha, actividades, cantidad, tipo, observaciones, realizado, recibido)
       this.firebase
         .doUpdateDocumentDb(id, equipo, fecha, actividades, cantidad, tipo, observaciones, realizado, recibido)
-        .then(function () {
+        .then(() => {
           console.log('Document successfully updated!')
+          this.setState({
+            open: false
+          })
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.error('Error adding document: ', error)
         })
     }

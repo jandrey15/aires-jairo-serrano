@@ -1,7 +1,7 @@
 import { Header, Table, Container, Responsive, Button, Form } from 'semantic-ui-react'
 import Util from '../helpers/util'
 
-const ListDocuments = ({ data, handleEdit, showDelete }) => {
+const ListDocuments = ({ data, handleEdit, showDelete, role }) => {
   return (
     <section id='List__Documents'>
       <Container>
@@ -97,18 +97,22 @@ const ListDocuments = ({ data, handleEdit, showDelete }) => {
                     {data.recibido}
                   </Responsive>
                   <Responsive as={Table.Cell} minWidth={Responsive.onlyMobile.minWidth}>
-                    <Form widths='equal'>
-                      <Form.Group inline>
-                        <Button size='medium' primary onClick={(e) => handleEdit(data.id, e)}>
-                          Editar
-                        </Button>
-                      </Form.Group>
-                      <Form.Group inline>
-                        <Button size='medium' negative onClick={(e) => showDelete(data.id, e)}>
-                          Eliminar
-                        </Button>
-                      </Form.Group>
-                    </Form>
+                    {
+                      role && (
+                        <Form widths='equal'>
+                          <Form.Group inline>
+                            <Button size='medium' primary onClick={(e) => handleEdit(data.id, e)}>
+                              Editar
+                            </Button>
+                          </Form.Group>
+                          <Form.Group inline>
+                            <Button size='medium' negative onClick={(e) => showDelete(data.id, e)}>
+                              Eliminar
+                            </Button>
+                          </Form.Group>
+                        </Form>
+                      )
+                    }
                   </Responsive>
                 </Table.Row>
               ))

@@ -216,9 +216,9 @@ class Firebase {
 
   doGetDocuments = () => this.db.collection('mantenimientos').orderBy('fecha', 'desc')
 
-  doCurrentUser = () => this.auth().currentUser
+  doCurrentUser = () => this.auth.currentUser;
 
-  doUpdateProfile = (name, id) => {
+  doUpdateProfileDb = (name, id) => {
     return this.db
       .collection('users')
       .doc(id)
@@ -226,6 +226,8 @@ class Firebase {
         displayName: name
       })
   }
+
+  doGetUser = (id) => this.db.collection('users').doc(id).get()
 }
 
 export default Firebase
