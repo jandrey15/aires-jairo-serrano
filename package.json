@@ -9,6 +9,7 @@
     "now-build": "next build",
     "start": "NODE_ENV=production node server.js",
     "startWind": "npm run build && cross-env NODE_ENV=production node server.js",
+    "export": "yarn run build && next export",
     "lint": "standard --fix"
   },
   "standard": {

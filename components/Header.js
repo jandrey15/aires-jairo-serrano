@@ -3,9 +3,12 @@ import { Container, Menu, Dropdown } from 'semantic-ui-react'
 import Router from 'next/router'
 
 class Header extends Component {
-  state = { activeItem: 'home' }
+  state = { activeItem: 'admin' }
 
-  handleItemClick = (e, { name }) => this.setState({ activeItem: name })
+  handleItemClick = (e, { name }) => {
+    this.setState({ activeItem: name })
+    Router.push('/admin')
+  }
 
   handleProfile = () => Router.push('/perfil')
   handleInicio = () => Router.push('/admin')
@@ -18,7 +21,7 @@ class Header extends Component {
       <header>
         <Container>
           <Menu size='large'>
-            <Menu.Item name='Admin' active={activeItem === 'home'} onClick={this.handleItemClick} />
+            <Menu.Item name='admin' active={activeItem === 'admin'} onClick={this.handleItemClick} />
             {/* <Menu.Item
               name='messages'
               active={activeItem === 'messages'}
