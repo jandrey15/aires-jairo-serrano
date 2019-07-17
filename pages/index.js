@@ -60,8 +60,16 @@ class Home extends Component {
         if (result.user.emailVerified) {
           console.info(`Bienvenido ${result.user.displayName}`)
         } else {
-          this.firebase.doSignOut()
           console.warn('Por favor realiza la verificación de la cuenta')
+          const user = this.firebase.doCurrentUser()
+
+          user.sendEmailVerification().then(() => {
+            console.log('Se envío el correo')
+          }).catch((error) => {
+            console.error('Algo salio mal -> ', error)
+          })
+          // Cierra la sesión
+          this.firebase.doSignOut()
         }
       })
       .catch(error => {

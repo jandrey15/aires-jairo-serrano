@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "alias": "aires-jairo-serrano",
+  "name": "aires-jairo-serrano",
+  "builds": [
+    { "src": "package.json", "use": "@now/static-build" }
+  ],
+  "env": {
+    "API_KEY": "@api-key",
+    "AUTH_DOMAIN": "airesjairoserrano.firebaseapp.com",
+    "DATABASE_URL": "@database-url",
+    "PROJECT_ID": "airesjairoserrano",
+    "STORAGE_BUCKET": "airesjairoserrano.appspot.com",
+    "MESSAGING_SENDER_ID": "1030036236749"
+  }
+}
